@@ -2,6 +2,8 @@ const express = require('express')
 const dtb = require('./src/dtb/inmem-db')
 const app = express()
 
+const port = process.env.PORT || 3000
+
 app.all('*', (req, res, next) => {
     console.log('Request:', req.method, req.url)
     next()
@@ -32,4 +34,6 @@ app.get('/api/users', (req, res) => {
     })
 })
 
-app.listen(3000)
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
+})
