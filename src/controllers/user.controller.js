@@ -45,7 +45,10 @@ let userController = {
 
     getById: (req, res, next) => {
         const userId = req.params.userId
-        userService.getById(userId, (error, success) => {
+        const myUserId = userId[1]
+        // console.log('userid:' + userId)
+        // console.log('correct userid: ' + myUserId)
+        userService.getById(myUserId, (error, success) => {
             if (error) {
                 return next({
                     status: error.status,
@@ -55,7 +58,7 @@ let userController = {
             }
             if (success) {
                 res.status(200).json({
-                    status: success.status,
+                    status: 200,
                     message: success.message,
                     data: success.data
                 })

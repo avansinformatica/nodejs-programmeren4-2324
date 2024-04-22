@@ -1,5 +1,6 @@
 const express = require('express')
 const userRoutes = require('./src/routes/user.routes')
+const logger = require('tracer').console()
 
 const app = express()
 
@@ -10,6 +11,8 @@ const port = process.env.PORT || 3000
 
 app.all('*', (req, res, next) => {
     console.log('Request:', req.method, req.url)
+    // log regel mbv tracer
+    logger.log('Request: ', req.method, req.url)
     next()
 })
 

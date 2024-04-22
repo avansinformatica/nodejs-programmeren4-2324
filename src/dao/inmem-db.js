@@ -37,14 +37,18 @@ const database = {
         }, this._delayTime)
     },
 
-    getById(id, callback) {
+    getById(userId, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
-            if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+            if (userId < 0 || userId >= this._data.length) {
+                callback(
+                    { message: `Error: id ${userId} does not exist!` },
+                    null
+                )
             } else {
-                callback(null, this._data[id])
+                callback(null, this._data[userId])
             }
+            // callback(null, this._data[id])
         }, this._delayTime)
     },
 
