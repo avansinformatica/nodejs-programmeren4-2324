@@ -30,7 +30,7 @@ const validateUserCreate = (req, res, next) => {
 const validateUserCreateAssert = (req, res, next) => {
     try {
         assert(req.body.emailAdress, 'Missing email')
-        assert(req.body.firstName, 'Missing first name')
+        assert(req.body.firstName, 'Missing or incorrect first name')
         assert(req.body.lastName, 'Missing last name')
         next()
     } catch (ex) {
@@ -60,8 +60,13 @@ const validateUserCreateChaiShould = (req, res, next) => {
 
 const validateUserCreateChaiExpect = (req, res, next) => {
     try {
+        assert(req.body.firstName, 'Missing or incorrect firstName field')
         chai.expect(req.body.firstName).to.not.be.empty
         chai.expect(req.body.firstName).to.be.a('string')
+        chai.expect(req.body.firstName).to.match(
+            /^[a-zA-Z]+$/,
+            'firstName must be a string'
+        )
         next()
     } catch (ex) {
         return res.status(400).json({
@@ -73,7 +78,7 @@ const validateUserCreateChaiExpect = (req, res, next) => {
 }
 
 // Userroutes
-router.post('/api/users', validateUserCreateAssert, userController.create)
+router.post('/api/users', validateUserCreateChaiExpect, userController.create)
 router.get('/api/users', userController.getAll)
 router.get('/api/users/:userId', userController.getById)
 
