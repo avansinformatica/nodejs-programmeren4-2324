@@ -27,13 +27,14 @@ const database = {
     // Ieder nieuw item in db krijgt 'autoincrement' index.
     // Je moet die wel zelf toevoegen aan ieder nieuw item.
     _index: 2,
+    _delayTime: 500,
 
     getAll(callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
             // Roep de callback aan, en retourneer de data
             callback(null, this._data)
-        }, 1500)
+        }, this._delayTime)
     },
 
     getById(id, callback) {
@@ -44,7 +45,7 @@ const database = {
             } else {
                 callback(null, this._data[id])
             }
-        }, 1500)
+        }, this._delayTime)
     },
 
     add(item, callback) {
@@ -58,7 +59,7 @@ const database = {
             // Roep de callback aan het einde van de operatie
             // met het toegevoegde item als argument, of null als er een fout is opgetreden
             callback(null, item)
-        }, 1500)
+        }, this._delayTime)
     }
 
     // Voeg zelf de overige database functionaliteit toe
