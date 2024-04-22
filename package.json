@@ -14,7 +14,7 @@
         "avans",
         "programmeren-4"
     ],
-    "author": "Robin",
+    "author": "Mark van der Velden",
     "license": "ISC",
     "prettier": {
         "singleQuote": true,
