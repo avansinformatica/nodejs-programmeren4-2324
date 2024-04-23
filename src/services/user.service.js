@@ -30,7 +30,7 @@ const userService = {
         })
     },
 
-    getById: (userId, callback) => {
+    getById: (user, callback) => {
         database.getById(userId, (err, data) => {
             if (err) {
                 callback(err, null)
@@ -51,6 +51,19 @@ const userService = {
             } else {
                 callback(null, {
                     message: `User deleted with id ${userId}.`,
+                    data: data
+                })
+            }
+        })
+    },
+
+    changeUser: (user, userId, callback) => {
+        database.change(user, userId, (err, data) => {
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, {
+                    message: `User changed with id ${userId}.`,
                     data: data
                 })
             }

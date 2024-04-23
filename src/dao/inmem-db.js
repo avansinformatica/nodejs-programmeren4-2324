@@ -80,6 +80,17 @@ const database = {
                 callback(null, userId)
             }
         }, this._delayTime)
+    },
+
+    change(item, userId, callback) {
+        // Simuleer een asynchrone operatie
+        setTimeout(() => {
+            this._data[userId] = item
+
+            // Roep de callback aan het einde van de operatie
+            // met het toegevoegde item als argument, of null als er een fout is opgetreden
+            callback(null, item)
+        }, this._delayTime)
     }
 }
 

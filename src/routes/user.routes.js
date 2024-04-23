@@ -16,8 +16,6 @@ router.post('/api/users', userController.create)
 router.get('/api/users', userController.getAll)
 router.get('/api/users/:userId', userController.getById)
 router.delete('/api/users/:userId', userController.deleteUser)
-
-// Tijdelijke routes om niet bestaande routes op te vangen
-router.put('/api/users/:userId', notFound)
+router.put('/api/users/:userId', userController.changeUser)
 
 module.exports = router

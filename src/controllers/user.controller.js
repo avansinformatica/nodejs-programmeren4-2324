@@ -87,6 +87,29 @@ let userController = {
                 })
             }
         })
+    },
+
+    changeUser: (req, res, next) => {
+        const userId = req.params.userId
+        const myUserId = userId[1]
+        const user = req.body
+
+        userService.changeUser(user, myUserId, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: {}
+                })
+            }
+            if (success) {
+                res.status(200).json({
+                    status: success.status,
+                    message: success.message,
+                    data: success.data
+                })
+            }
+        })
     }
 }
 
