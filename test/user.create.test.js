@@ -22,7 +22,7 @@ describe('UC201 Registreren als nieuwe user', () => {
     /**
      * Hier starten de testcases
      */
-    it.only('TC-201-1 Verplicht veld ontbreekt', (done) => {
+    it('TC-201-1 Verplicht veld ontbreekt', (done) => {
         chai.request(server)
             .post(endpointToTest)
             .send({
