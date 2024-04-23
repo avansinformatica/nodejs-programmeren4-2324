@@ -1,6 +1,7 @@
-const express = require('express')
-const router = express.Router()
-const userController = require('../controllers/user.controller')
+const express = require('express');
+const router = express.Router();
+const { userController, validateUserCreateAssert } = require('../controllers/user.controller'); 
+
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -8,16 +9,22 @@ const notFound = (req, res, next) => {
         status: 404,
         message: 'Route not found',
         data: {}
-    })
-}
+    });
+};
 
 // Userroutes
-router.post('/api/users', userController.create)
-router.get('/api/users', userController.getAll)
-router.get('/api/users/:userId', userController.getById)
+// GET
+router.get('/api/users', userController.getAll);
+router.get('/api/users/:userId', userController.getById);
 
-// Tijdelijke routes om niet bestaande routes op te vangen
-router.put('/api/users/:userId', notFound)
-router.delete('/api/users/:userId', notFound)
+// POST
+router.post('/api/users', validateUserCreateAssert, userController.create);
 
-module.exports = router
+
+// PUT
+router.put('/api/users/:userId', validateUserCreateAssert, userController.update);
+
+// DELETE
+router.delete('/api/users/:userId', userController.delete);
+
+module.exports = router;

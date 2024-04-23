@@ -41,12 +41,13 @@ const database = {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
             if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+                callback({ message: `Error: id ${id} does not exist!` }, null);
             } else {
-                callback(null, this._data[id])
+                callback(null, this._data[id]);
             }
-        }, this._delayTime)
+        }, this._delayTime);
     },
+    
 
     add(item, callback) {
         // Simuleer een asynchrone operatie
@@ -60,10 +61,52 @@ const database = {
             // met het toegevoegde item als argument, of null als er een fout is opgetreden
             callback(null, item)
         }, this._delayTime)
-    }
+    },
+    
+    //update
+    update(id, newItem, callback) {
+        setTimeout(() => {
+            const numericId = parseInt(id);
+    
+            if (isNaN(numericId)) {
+                callback({ message: `Invalid id: ${id}` });
+                return;
+            }
+    
+            const index = this._data.findIndex(item => item.id === numericId);
+            if (index === -1) {
+                callback({ message: `Item with id ${id} not found` });
+            } else {
+                const itemToUpdate = this._data[index];
+                if (newItem.firstName) itemToUpdate.firstName = newItem.firstName;
+                if (newItem.lastName) itemToUpdate.lastName = newItem.lastName;
+                if (newItem.emailAdress) itemToUpdate.emailAdress = newItem.emailAdress;
+                callback(null, itemToUpdate);
+            }
+        }, 1500);
+    },
+    
 
-    // Voeg zelf de overige database functionaliteit toe
+    //delete
+    delete(id, callback) {
+        setTimeout(() => {
+            // Controleren of het id numeriek is
+            if (isNaN(id)) {
+                callback({ message: `Invalid id: ${id}` });
+                return;
+            }
+   
+            const index = this._data.findIndex(item => item.id === parseInt(id));
+            if (index === -1) {
+                callback({ message: `Item with id ${id} not found` });
+            } else {
+                const removedItem = this._data.splice(index, 1)[0];
+                callback(null, removedItem);
+            }
+        },this._delayTime);
+    }
 }
+
 
 module.exports = database
 // module.exports = database.index;
