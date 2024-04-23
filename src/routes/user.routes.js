@@ -15,9 +15,9 @@ const notFound = (req, res, next) => {
 router.post('/api/users', userController.create)
 router.get('/api/users', userController.getAll)
 router.get('/api/users/:userId', userController.getById)
+router.delete('/api/users/:userId', userController.deleteUser)
 
 // Tijdelijke routes om niet bestaande routes op te vangen
 router.put('/api/users/:userId', notFound)
-router.delete('/api/users/:userId', notFound)
 
 module.exports = router
