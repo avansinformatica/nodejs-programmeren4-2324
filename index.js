@@ -1,5 +1,6 @@
 const express = require('express')
 const userRoutes = require('./src/routes/user.routes')
+const logger = require('./src/util/logger')
 
 const app = express()
 
@@ -49,7 +50,7 @@ app.use((error, req, res, next) => {
 })
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
+    logger.info(`Server is running on port ${port}`)
 })
 
 // Deze export is nodig zodat Chai de server kan opstarten
