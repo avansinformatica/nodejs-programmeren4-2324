@@ -1,18 +1,53 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../index')
+const tracer = require('tracer')
 
 chai.should()
 chai.use(chaiHttp)
+tracer.setLevel('error')
 
-const endpointToTest = '/api/users'
+const endpointToTest = '/api/user'
 
 describe('UC201 Registreren als nieuwe user', () => {
-    it.skip('TC-201-1 Verplicht veld ontbreekt', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
+    /**
+     * Voorbeeld van een beforeEach functie.
+     * Hiermee kun je code hergebruiken of initialiseren.
+     */
+    beforeEach((done) => {
+        console.log('Before each test')
         done()
+    })
+
+    /**
+     * Hier starten de testcases
+     */
+    it.only('TC-201-1 Verplicht veld ontbreekt', (done) => {
+        chai.request(server)
+            .post(endpointToTest)
+            .send({
+                // firstName: 'Voornaam', ontbreekt
+                lastName: 'Achternaam',
+                emailAdress: 'v.a@server.nl'
+            })
+            .end((err, res) => {
+                /**
+                 * Voorbeeld uitwerking met chai.expect
+                 */
+                chai.expect(res).to.have.status(400)
+                chai.expect(res).not.to.have.status(200)
+                chai.expect(res.body).to.be.a('object')
+                chai.expect(res.body).to.have.property('status').equals(400)
+                chai.expect(res.body)
+                    .to.have.property('message')
+                    .equals('Missing or incorrect firstName field')
+                chai
+                    .expect(res.body)
+                    .to.have.property('data')
+                    .that.is.a('object').that.is.empty
+
+                done()
+            })
     })
 
     it.skip('TC-201-2 Niet-valide email adres', (done) => {
