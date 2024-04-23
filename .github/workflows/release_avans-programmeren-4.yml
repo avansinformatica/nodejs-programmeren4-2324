@@ -43,9 +43,11 @@ jobs:
               with:
                   name: node-app
 
-            - name: npm test
-              run: |
-                  npm run test --if-present
+            - name: Unzip artifact for tests
+              run: unzip release.zip
+
+            - name: Run tests
+              run: npm test
 
     deploy:
         runs-on: ubuntu-latest
