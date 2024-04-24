@@ -1,6 +1,26 @@
 const userService = require('../services/user.service')
+const assert = require('assert')
 
 let userController = {
+    validateUser: (req, res, next) => {
+        let user = req.body
+        let { firstName, lastName, emailAdress } = user
+        try {
+            assert(typeof firstName === 'string', 'First name must be a string')
+            assert(typeof lastName === 'string', 'Last name must be a string')
+            assert(
+                typeof emailAdress === 'string',
+                'Email address must be a string'
+            )
+            next()
+        } catch (err) {
+            console.log(err)
+            res.status(400).json({
+                status: 400,
+                message: err.message
+            })
+        }
+    },
     create: (req, res, next) => {
         const user = req.body
         //
