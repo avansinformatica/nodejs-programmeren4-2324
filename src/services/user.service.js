@@ -30,7 +30,7 @@ const userService = {
         })
     },
 
-    getById: (user, callback) => {
+    getById: (userId, callback) => {
         database.getById(userId, (err, data) => {
             if (err) {
                 callback(err, null)

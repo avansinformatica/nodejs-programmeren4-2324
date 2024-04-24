@@ -67,8 +67,10 @@ let userController = {
         const userId = req.params.userId
         const myUserId = userId[1]
         // console.log('userid:' + userId)
-        // console.log('correct userid: ' + myUserId)
-        userService.getById(myUserId, (error, success) => {
+        const numberUserId = parseInt(myUserId)
+        console.log('correct userid: ' + numberUserId)
+
+        userService.getById(numberUserId, (error, success) => {
             if (error) {
                 return next({
                     status: error.status,

@@ -42,15 +42,29 @@ const database = {
     getById(userId, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
-            if (userId < 0 || userId >= this._data.length) {
-                callback(
-                    { message: `Error: id ${userId} does not exist!` },
-                    null
-                )
-            } else {
-                callback(null, this._data[userId])
-            }
+            // if (userId < 0 || userId >= this._data.length) {
+            //     callback(
+            //         { message: `Error: id ${userId} does not exist!` },
+            //         null
+            //     )
+            // } else {
+            //     callback(null, this._data[userId])
+            // }
             // callback(null, this._data[id])
+            try {
+                console.log('UserID: ' + userId)
+                assert.ok(
+                    this.checkIfIDExists(userId),
+                    'This ID does not exist'
+                )
+                console.log('userId: ' + userId)
+                let arrayPosition = this.getArrayPositionOfUserID(userId)
+
+                callback(null, this._data[arrayPosition])
+            } catch (error) {
+                console.error(error)
+                callback(error)
+            }
         }, this._delayTime)
     },
 
@@ -107,10 +121,44 @@ const database = {
     checkIfEmailExists(emailAdress) {
         for (let i = 0; i < this._data.length; i++) {
             if (this._data[i].emailAdress === emailAdress) {
+                console.log('entered if loop in checkIfEmailExists')
+                console.log('userId in if loop: ' + this._data[i].id)
                 return true
             }
         }
         return false
+    },
+
+    checkIfIDExists(parameterID) {
+        console.log('UserID in checkIfIDExists: ' + parameterID)
+        for (let i = 0; i < this._data.length; i++) {
+            console.log(
+                'arrayID: ' +
+                    this._data[i].id +
+                    ' and parameterID: ' +
+                    parameterID
+            )
+            console.log('typeof parameterID: ' + typeof parameterID)
+            if (this._data[i].id === parameterID) {
+                console.log('entered if loop in checkIfIDExists')
+                return true
+            }
+        }
+        return false
+    },
+
+    getArrayPositionOfUserID(id) {
+        let arrayPosition = 0
+        for (let i = 0; i < this._data.length; i++) {
+            console.log('entered for loop')
+            console.log(i)
+            console.log(this._data[i].id)
+            if (this._data[i].id === id) {
+                console.log('entered if loop')
+                arrayPosition = i
+            }
+        }
+        return arrayPosition
     }
 }
 
