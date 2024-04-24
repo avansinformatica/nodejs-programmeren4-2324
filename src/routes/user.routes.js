@@ -1,15 +1,43 @@
 const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/user.controller')
+const assert = require('assert')
 
-// Tijdelijke functie om niet bestaande routes op te vangen
-const notFound = (req, res, next) => {
-    res.status(404).json({
-        status: 404,
-        message: 'Route not found',
-        data: {}
-    })
-}
+// Assert validations
+// const validateUserCreateAssert = (callback) => {
+//     try {
+//         assert.strictEqual(2 + 2, 4, '2 + 2 should be equal to 4')
+//         callback(null)
+//     } catch (error) {
+//         callback(error)
+//     }
+// }
+
+// validateUserCreateAssert((error) => {
+//     if (error) {
+//         console.error(error)
+//     } else {
+//         console.log('Assertion passed successfully')
+//         // Proceed with your logic here
+//     }
+// })
+// const validateUserCreateAssert = (callback) => {
+//     try {
+//         assert.ok
+//         callback(null)
+//     } catch (error) {
+//         callback(error)
+//     }
+// }
+
+// validateUserCreateAssert((error) => {
+//     if (error) {
+//         console.error(error)
+//     } else {
+//         console.log('Assertion passed successfully')
+//         // Proceed with your logic here
+//     }
+// })
 
 // Userroutes
 router.post('/api/users', userController.create)

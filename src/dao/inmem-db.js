@@ -5,6 +5,8 @@
 // De database heeft twee methoden: get en add.
 // Opdracht: Voeg de overige methoden toe.
 //
+const assert = require('assert')
+
 const database = {
     // het array met dummy records. Dit is de 'database'.
     _data: [
@@ -55,14 +57,23 @@ const database = {
     add(item, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
-            // Voeg een id toe en voeg het item toe aan de database
-            item.id = this._index++
-            // Voeg item toe aan de array
-            this._data.push(item)
-
-            // Roep de callback aan het einde van de operatie
-            // met het toegevoegde item als argument, of null als er een fout is opgetreden
-            callback(null, item)
+            try {
+                assert.ok(
+                    !this.checkIfEmailExists(item.emailAdress),
+                    'An user with this emailaddress already exists'
+                )
+                // Proceed with your logic here
+                // Add an id and add the item to the database
+                item.id = this._index++
+                // Add item to the array
+                this._data.push(item)
+                // Call the callback at the end of the operation
+                // with the added item as argument, or null if an error occurred
+                callback(null, item)
+            } catch (error) {
+                console.error(error)
+                callback(error)
+            }
         }, this._delayTime)
     },
 
@@ -91,6 +102,15 @@ const database = {
             // met het toegevoegde item als argument, of null als er een fout is opgetreden
             callback(null, item)
         }, this._delayTime)
+    },
+
+    checkIfEmailExists(emailAdress) {
+        for (let i = 0; i < this._data.length; i++) {
+            if (this._data[i].emailAdress === emailAdress) {
+                return true
+            }
+        }
+        return false
     }
 }
 
