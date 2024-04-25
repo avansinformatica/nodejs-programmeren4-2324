@@ -7,18 +7,30 @@ const validateUser = (req, res, next) => {
     let user = req.body
     let { firstName, lastName, emailAdress } = user
     try {
-        assert(typeof firstName === 'string', 'First name must be a string')
-        assert(typeof lastName === 'string', 'Last name must be a string')
+        assert(
+            typeof firstName === 'string',
+            'First name is missing or is not a string'
+        )
+        assert(
+            typeof lastName === 'string',
+            'Last name is missing or is not a string'
+        )
         assert(
             typeof emailAdress === 'string',
-            'Email address must be a string'
+            'Email address is missing or is not a string'
         )
         next()
     } catch (err) {
         console.log(err)
-        res.status(400).json({
+        // res.status(400).json({
+        //     status: 400,
+        //     message: err.message
+        // })
+        return next({
+            // error wordt doorgestuurd naar de error handler in index.js
             status: 400,
-            message: err.message
+            message: err.message,
+            data: {}
         })
     }
 }
