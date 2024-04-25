@@ -3,11 +3,16 @@ const logger = require('../util/logger')
 
 const userService = {
     create: (user, callback) => {
-        logger.info('create user')
+        logger.info('create user', user)
         database.add(user, (err, data) => {
             if (err) {
+                logger.info(
+                    'error creating user: ',
+                    err.message || 'unknown error'
+                )
                 callback(err, null)
             } else {
+                logger.trace(`User created with id ${data.id}.`)
                 callback(null, {
                     message: `User created with id ${data.id}.`,
                     data: data

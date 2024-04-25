@@ -4,6 +4,7 @@ const chai = require('chai')
 chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
+const logger = require('../util/logger')
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -67,9 +68,11 @@ const validateUserCreateChaiExpect = (req, res, next) => {
             /^[a-zA-Z]+$/,
             'firstName must be a string'
         )
+        logger.trace('User successfully validated')
         next()
     } catch (ex) {
-        return res.status(400).json({
+        logger.trace('User validation failed:', ex.message)
+        next({
             status: 400,
             message: ex.message,
             data: {}
