@@ -3,12 +3,8 @@ const logger = require('../util/logger')
 
 let userController = {
     create: (req, res, next) => {
-        logger.info('create user')
-        logger.trace('create user', req.body)
         const user = req.body
-        //
-        // Todo: Validate user input
-        //
+        logger.info('create user', user.firstName, user.lastName)
         userService.create(user, (error, success) => {
             if (error) {
                 return next({
