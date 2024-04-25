@@ -5,9 +5,6 @@ let userController = {
     create: (req, res, next) => {
         const user = req.body
         logger.info('create user', user.firstName, user.lastName)
-        //
-        // Todo: Validate user input
-        //
         userService.create(user, (error, success) => {
             if (error) {
                 return next({
