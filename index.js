@@ -52,5 +52,15 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
 
+// Get request for user with dummy data
+app.get('/api/users', (req, res) => {
+    console.log('GET /api/users')
+    const users = [
+        { id: 1, name: 'John Doe', email: 'iasdf@hotmail.com' },
+        { id: 2, name: 'Jane Doe', email: 'skuefh@hotmail.com' }
+    ]
+    res.json(users)
+})
+
 // Deze export is nodig zodat Chai de server kan opstarten
 module.exports = app
