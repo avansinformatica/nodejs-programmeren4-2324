@@ -1,18 +1,19 @@
 const sql = require('mssql')
+const { config } = require('../../src/util/config')
 
-const config = {
-    user: process.env.MSSQL_DB_USER || 'username', // better stored in an app setting such as process.env.MSSQL_DB_USER
-    password: process.env.MSSQL_DB_PASSWORD || 'password', // better stored in an app setting such as process.env.MSSQL_DB_PASSWORD
-    server: process.env.MSSQL_DB_SERVER || 'your_server.database.windows.net', // better stored in an app setting such as process.env.MSSQL_DB_SERVER
-    port: process.env.MSSQL_DB_PORT || 1433, // optional, defaults to 1433, better stored in an app setting such as process.env.MSSQL_DB_PORT
-    database: process.env.MSSQL_DB_DATABASE || 'AdventureWorksLT', // better stored in an app setting such as process.env.MSSQL_DB_NAME
-    authentication: {
-        type: 'default'
-    },
-    options: {
-        encrypt: true
-    }
-}
+// const config = {
+//     user: process.env.MSSQL_DB_USER || 'username', // better stored in an app setting such as process.env.MSSQL_DB_USER
+//     password: process.env.MSSQL_DB_PASSWORD || 'password', // better stored in an app setting such as process.env.MSSQL_DB_PASSWORD
+//     server: process.env.MSSQL_DB_SERVER || 'your_server.database.windows.net', // better stored in an app setting such as process.env.MSSQL_DB_SERVER
+//     port: process.env.MSSQL_DB_PORT || 1433, // optional, defaults to 1433, better stored in an app setting such as process.env.MSSQL_DB_PORT
+//     database: process.env.MSSQL_DB_DATABASE || 'AdventureWorksLT', // better stored in an app setting such as process.env.MSSQL_DB_NAME
+//     authentication: {
+//         type: 'default'
+//     },
+//     options: {
+//         encrypt: true
+//     }
+// }
 
 /*
     //Use Azure VM Managed Identity to connect to the SQL database
@@ -42,11 +43,11 @@ const config = {
     }
 */
 
-console.log('Starting...')
 connectAndQuery()
 
 async function connectAndQuery() {
     try {
+        console.log('Connecting to the database ...')
         var poolConnection = await sql.connect(config)
 
         console.log('Reading rows from the Table...')
@@ -76,7 +77,7 @@ async function connectAndQuery() {
             )
         })
 
-        // close connection only when we're certain application is finished
+        console.log('Closing the connection...')
         poolConnection.close()
     } catch (err) {
         console.error(err.message)
