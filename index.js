@@ -41,8 +41,10 @@ app.use((error, req, res, next) => {
     })
 })
 
-app.listen(port, () => {
-    logger.info(`Server is running on port ${port}`)
+const server = app.listen(port, () => {
+    const host = server.address().address
+    const port = server.address().port
+    logger.info(`Server is running on ${host}:${port}`)
 })
 
 // Deze export is nodig zodat Chai de server kan opstarten
