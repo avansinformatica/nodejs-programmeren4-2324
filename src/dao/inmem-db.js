@@ -21,6 +21,12 @@ const database = {
             lastName: 'Jansen',
             emailAdress: 'm@server.nl'
             // Hier de overige velden uit het functioneel ontwerp
+        },
+        {
+            id: 2,
+            firstName: 'Amin',
+            lastName: 'Ahmidout',
+            emailAdress: 'A.ahmidout@student.avans.nl'
         }
     ],
 
