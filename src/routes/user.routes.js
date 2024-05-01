@@ -4,6 +4,7 @@ const chai = require('chai')
 chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
+const database = require('../path/to/database') // Replace '../path/to/database' with the actual path to your database module or object
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -80,5 +81,6 @@ router.get('/api/users/:userId', userController.getById)
 // Tijdelijke routes om niet bestaande routes op te vangen
 router.put('/api/users/:userId', notFound)
 router.delete('/api/users/:userId', notFound)
+
 
 module.exports = router
