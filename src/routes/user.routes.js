@@ -4,7 +4,7 @@ const chai = require('chai')
 chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
-const database = require('../path/to/database') // Replace '../path/to/database' with the actual path to your database module or object
+const database = require('../dao/inmem-db') // Replace '../path/to/database' with the actual path to your database module or object
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
