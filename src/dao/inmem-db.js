@@ -4,6 +4,9 @@
 // De array bevat een aantal dummy records.
 // De database heeft twee methoden: get en add.
 // Opdracht: Voeg de overige methoden toe.
+
+const { create } = require("../services/user.service")
+
 //
 const database = {
     // het array met dummy records. Dit is de 'database'.
@@ -22,12 +25,7 @@ const database = {
             emailAdress: 'm@server.nl'
             // Hier de overige velden uit het functioneel ontwerp
         },
-        {
-            id: 2,
-            firstName: 'Amin',
-            lastName: 'Ahmidout',
-            emailAdress: 'A.ahmidout@student.avans.nl'
-        }
+        
     ],
 
     // Ieder nieuw item in db krijgt 'autoincrement' index.
@@ -42,6 +40,8 @@ const database = {
             callback(null, this._data)
         }, this._delayTime)
     },
+
+        
 
     getById(id, callback) {
         // Simuleer een asynchrone operatie

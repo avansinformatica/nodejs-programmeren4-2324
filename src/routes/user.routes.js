@@ -5,6 +5,23 @@ chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
 const database = require('../dao/inmem-db') // Replace '../path/to/database' with the actual path to your database module or object
+const userService = require('../services/user.service')
+
+// Importeer de juiste database-module of -object
+
+// Implementeer de create-functie in de database-module of -object
+userService.create = (user) => {
+    // Voeg hier de logica toe om een nieuwe gebruiker aan de database toe te voegen
+    database.add(user, (err, newUser) => {
+        if (err) {
+            console.error(err)
+        } else {
+            console.log('User added successfully:', newUser)
+        }
+    })
+}
+
+
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -84,3 +101,4 @@ router.delete('/api/users/:userId', notFound)
 
 
 module.exports = router
+
