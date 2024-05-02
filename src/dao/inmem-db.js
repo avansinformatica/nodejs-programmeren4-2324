@@ -5,7 +5,7 @@
 // De database heeft twee methoden: get en add.
 // Opdracht: Voeg de overige methoden toe.
 
-const { create } = require("../services/user.service")
+
 
 //
 const database = {
