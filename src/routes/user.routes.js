@@ -9,17 +9,7 @@ const userService = require('../services/user.service')
 
 // Importeer de juiste database-module of -object
 
-// Implementeer de create-functie in de database-module of -object
-userService.create = (user) => {
-    // Voeg hier de logica toe om een nieuwe gebruiker aan de database toe te voegen
-    database.add(user, (err, newUser) => {
-        if (err) {
-            console.error(err)
-        } else {
-            console.log('User added successfully:', newUser)
-        }
-    })
-}
+
 
 
 
