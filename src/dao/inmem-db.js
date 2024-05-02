@@ -5,7 +5,7 @@
 // De database heeft twee methoden: get en add.
 // Opdracht: Voeg de overige methoden toe.
 
-const { create } = require("../services/user.service")
+
 
 //
 const database = {
@@ -24,7 +24,7 @@ const database = {
             lastName: 'Jansen',
             emailAdress: 'm@server.nl'
             // Hier de overige velden uit het functioneel ontwerp
-        },
+        }
         
     ],
 
@@ -41,6 +41,7 @@ const database = {
         }, this._delayTime)
     },
 
+        
 
     getById(id, callback) {
         // Simuleer een asynchrone operatie
