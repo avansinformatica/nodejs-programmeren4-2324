@@ -7,10 +7,8 @@
         "build": "npm install",
         "start": "node index.js",
         "dev": "nodemon index.js",
-        "test": "No test specified"
-
-        
-
+        "test": "No test specified",
+        "build": "No build specified"
     },
     "keywords": [
         "nodejs",
