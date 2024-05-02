@@ -60,7 +60,68 @@ const database = {
             // met het toegevoegde item als argument, of null als er een fout is opgetreden
             callback(null, item)
         }, this._delayTime)
+    },
+
+    checkEmailUnique(email, callback) {
+        // Simulate asynchronous operation
+        setTimeout(() => {
+            // Check if the email already exists in the database
+            const emailExists = this._data.some(user => user.emailAdress === email);
+
+            // Return the result via callback
+            callback(null, !emailExists); // true if email is unique, false otherwise
+        }, this._delayTime);
+    },
+
+    update(id, updatedData, callback) {
+        console.log("Updating item with ID:", id);
+        console.log("Updated data:", updatedData);
+        console.log("Data array:", this._data); // Add this line
+
+        // Simulate asynchronous operation
+        setTimeout(() => {
+            // Find the index of the item to update
+            const index = this._data.findIndex(item => {
+                console.log("Item ID:", item.id);
+                console.log("Provided ID:", id);
+                console.log("Comparison result:", item.id.toString() === id.toString());
+                return item.id.toString() === id.toString();
+            });
+            console.log("Index found:", index);
+
+            if (index === -1) {
+                // Item not found
+                console.log("Item not found with ID:", id);
+                callback({ message: `Error: id ${id} does not exist!` }, null);
+            } else {
+                // Update the item
+                this._data[index] = { ...this._data[index], ...updatedData };
+                console.log("Item updated:", this._data[index]);
+                callback(null, this._data[index]);
+            }
+        }, this._delayTime);
+    },
+
+    delete(id, callback) {
+        // Simulate asynchronous operation
+        setTimeout(() => {
+            // Find the index of the item to delete
+            const index = this._data.findIndex(item => item.id.toString() === id.toString());
+
+            if (index === -1) {
+                // Item not found
+                callback({ message: `Error: id ${id} does not exist!` }, null);
+            } else {
+                // Remove the item from the array
+                const deletedItem = this._data.splice(index, 1)[0];
+                callback(null, deletedItem);
+            }
+        }, this._delayTime);
     }
+
+
+
+
 
     // Voeg zelf de overige database functionaliteit toe
 }

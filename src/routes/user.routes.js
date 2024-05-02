@@ -5,6 +5,7 @@ chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
 const logger = require('../util/logger')
+const database = require('../dao/inmem-db')
 
 // Tijdelijke functie om niet bestaande routes op te vangen
 const notFound = (req, res, next) => {
@@ -27,58 +28,55 @@ const validateUserCreate = (req, res, next) => {
     next()
 }
 
-// Input validation function 2 met gebruik van assert
-const validateUserCreateAssert = (req, res, next) => {
-    try {
-        assert(req.body.emailAdress, 'Missing email')
-        assert(req.body.firstName, 'Missing or incorrect first name')
-        assert(req.body.lastName, 'Missing last name')
-        next()
-    } catch (ex) {
-        next({
-            status: 400,
-            message: ex.message,
-            data: {}
-        })
-    }
-}
 
-// Input validation function 2 met gebruik van assert
-const validateUserCreateChaiShould = (req, res, next) => {
+// Input validation function using Chai for POST /api/user
+const validateUserCreateChaiExpect = async (req, res, next) => {
     try {
-        req.body.firstName.should.not.be.empty.and.a('string')
-        req.body.lastName.should.not.be.empty.and.a('string')
-        req.body.emailAdress.should.not.be.empty.and.a('string').and.match(/@/)
-        next()
-    } catch (ex) {
-        next({
-            status: 400,
-            message: ex.message,
-            data: {}
-        })
-    }
-}
+        // Validate first name
+        chai.expect(req.body.firstName).to.not.be.empty;
+        chai.expect(req.body.firstName).to.be.a('string');
 
-const validateUserCreateChaiExpect = (req, res, next) => {
-    try {
-        assert(req.body.firstName, 'Missing or incorrect firstName field')
-        chai.expect(req.body.firstName).to.not.be.empty
-        chai.expect(req.body.firstName).to.be.a('string')
-        chai.expect(req.body.firstName).to.match(
-            /^[a-zA-Z]+$/,
-            'firstName must be a string'
-        )
-        logger.trace('User successfully validated')
-        next()
+        // Validate last name
+        chai.expect(req.body.lastName).to.not.be.empty;
+        chai.expect(req.body.lastName).to.be.a('string');
+
+        // Validate email address
+        chai.expect(req.body.emailAdress).to.not.be.empty;
+        chai.expect(req.body.emailAdress).to.be.a('string');
+        chai.expect(req.body.emailAdress).to.match(/@/);
+
+        // Check if email is unique
+        const isUnique = await checkEmailUniqueness(req.body.emailAdress);
+        if (!isUnique) {
+            throw new Error('Email address is already in use');
+        }
+
+        logger.trace('User successfully validated');
+        next();
     } catch (ex) {
-        logger.trace('User validation failed:', ex.message)
+        logger.error('User validation failed:', ex.message);
         next({
             status: 400,
             message: ex.message,
             data: {}
-        })
+        });
     }
-}
+};
+
+
+// Function to check email uniqueness
+const checkEmailUniqueness = async (email) => {
+    return new Promise((resolve, reject) => {
+        database.checkEmailUnique(email, (err, isUnique) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(isUnique);
+            }
+        });
+    });
+};
+
 
 // Userroutes
 router.post('/api/user', validateUserCreateChaiExpect, userController.create)
@@ -86,7 +84,7 @@ router.get('/api/user', userController.getAll)
 router.get('/api/user/:userId', userController.getById)
 
 // Tijdelijke routes om niet bestaande routes op te vangen
-router.put('/api/user/:userId', notFound)
-router.delete('/api/user/:userId', notFound)
+router.put('/api/user/:userId', userController.update)
+router.delete('/api/user/:userId', userController.delete)
 
 module.exports = router
