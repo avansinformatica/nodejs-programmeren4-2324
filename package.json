@@ -7,8 +7,7 @@
         "build": "npm install",
         "start": "node index.js",
         "dev": "nodemon index.js",
-        "test": "No test specified",
-        "build": "No build specified"
+        "test": "No test specified"
     },
     "keywords": [
         "nodejs",
@@ -16,7 +15,7 @@
         "avans",
         "programmeren-4"
     ],
-    "author": "Mark van der Velden",
+    "author": "Yessin Boukrach",
     "license": "ISC",
     "prettier": {
         "singleQuote": true,
