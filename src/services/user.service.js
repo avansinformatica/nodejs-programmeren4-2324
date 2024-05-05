@@ -26,6 +26,26 @@ const userService = {
                 })
             }
         })
+    },
+
+    getById: (id, callback) => {
+        database.getById(id, (err, data) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                if (data) {
+                    callback(null, {
+                        message: `User found with id ${id}.`,
+                        data: data
+                    });
+                } else {
+                    callback(null, {
+                        message: `User not found with id ${id}.`,
+                        data: null
+                    });
+                }
+            }
+        });
     }
 }
 
