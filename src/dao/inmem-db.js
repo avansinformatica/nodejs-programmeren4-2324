@@ -93,6 +93,25 @@ const database = {
                 callback(null, item)
             }
         }, this._delayTime)
+    },
+
+    delete(id, callback) {
+        // Simulate an asynchronous operation
+        setTimeout(() => {
+            if (id < 0 || id >= this._data.length) {
+                callback({ message: `Error: id ${id} does not exist!` }, null)
+            } else {
+                // Find the index of the item with the specified id
+                const index = this._data.findIndex((item) => item.id === id)
+
+                // Remove the item from the array
+                const deletedItem = this._data.splice(index, 1)[0]
+
+                // Call the callback at the end of the operation
+                // with the deleted item as argument, or null if an error occurred
+                callback(null, deletedItem)
+            }
+        }, this._delayTime)
     }
 }
 

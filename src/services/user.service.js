@@ -65,6 +65,26 @@ const userService = {
                     });
                 }
             }
+        })
+    },
+
+    delete: (id, callback) => {
+        database.delete(id, (err, data) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                if (data) {
+                    callback(null, {
+                        message: `User deleted with id ${id}.`,
+                        data: data
+                    });
+                } else {
+                    callback(null, {
+                        message: `User not found with id ${id}.`,
+                        data: null
+                    });
+                }
+            }
         });
     }
 }
