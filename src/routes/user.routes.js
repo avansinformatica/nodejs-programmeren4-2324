@@ -83,6 +83,27 @@ const validateEmail = (req, res, next) => {
     }
 };
 
+const validateUniqueEmail = (req, res, next) => {
+    const email = req.body.emailAdress;
+    database.findUserByEmail(email, (err, existingUser) => {
+        if (err) {
+            return res.status(500).json({
+                status: 500,
+                message: err.message,
+                data: {}
+            });
+        }
+        if (existingUser) {
+            return res.status(403).json({
+                status: 403,
+                message: 'Email address already exists',
+                data: {}
+            });
+        }
+        next();
+    });
+};
+
 
 
 const validateUserCreateChaiExpect = (req, res, next) => {
@@ -100,7 +121,7 @@ const validateUserCreateChaiExpect = (req, res, next) => {
 }
 
 // Userroutes
-router.post('/api/users', validateUserCreateAssert, validateEmail, userController.create)
+router.post('/api/users', validateUserCreateAssert, validateEmail, validateUniqueEmail, userController.create)
 router.get('/api/users', userController.getAll)
 router.get('/api/users/:userId', userController.getById)
 

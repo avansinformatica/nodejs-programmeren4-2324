@@ -5,8 +5,6 @@
 // De database heeft twee methoden: get en add.
 // Opdracht: Voeg de overige methoden toe.
 
-
-
 //
 const database = {
     // het array met dummy records. Dit is de 'database'.
@@ -25,7 +23,6 @@ const database = {
             emailAdress: 'm@server.nl'
             // Hier de overige velden uit het functioneel ontwerp
         }
-        
     ],
 
     // Ieder nieuw item in db krijgt 'autoincrement' index.
@@ -41,8 +38,17 @@ const database = {
         }, this._delayTime)
     },
 
-        
-
+    findUserByEmail(email, callback) {
+        // Simuleer een asynchrone operatie
+        setTimeout(() => {
+            const user = this._data.find((item) => item.emailAdress === email)
+            if (user) {
+                callback({ message: `Error: user with email ${email} found!` }, null)
+            } else {
+                callback(null, user)
+            }
+        }, this._delayTime)
+    },
     getById(id, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
