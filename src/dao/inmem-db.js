@@ -39,16 +39,17 @@ const database = {
     },
 
     findUserByEmail(email, callback) {
-        // Simuleer een asynchrone operatie
+        // Simulate an asynchronous operation
         setTimeout(() => {
             const user = this._data.find((item) => item.emailAdress === email)
             if (user) {
-                callback({ message: `Error: user with email ${email} found!` }, null)
-            } else {
                 callback(null, user)
+            } else {
+                callback(null, null)
             }
         }, this._delayTime)
     },
+    
     getById(id, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {

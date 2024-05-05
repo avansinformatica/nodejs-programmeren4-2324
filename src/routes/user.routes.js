@@ -94,9 +94,9 @@ const validateUniqueEmail = (req, res, next) => {
             });
         }
         if (existingUser) {
-            return res.status(403).json({
-                status: 403,
-                message: 'Email address already exists',
+            return res.status(400).json({
+                status: 400,
+                message: 'User already exists',
                 data: {}
             });
         }
