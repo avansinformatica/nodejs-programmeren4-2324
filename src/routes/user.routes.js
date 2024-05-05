@@ -22,17 +22,7 @@ const notFound = (req, res, next) => {
     })
 }
 
-// Input validation functions for user routes
-const validateUserCreate = (req, res, next) => {
-    if (!req.body.emailAdress || !req.body.firstName || !req.body.lastName) {
-        return res.status(400).json({
-            status: 400,
-            message: 'Missing email or password',
-            data: {}
-        })
-    }
-    next()
-}
+
 
 // Input validation function 2 met gebruik van assert
 const validateUserCreateAssert = (req, res, next) => {
@@ -50,21 +40,6 @@ const validateUserCreateAssert = (req, res, next) => {
     }
 }
 
-// Input validation function 2 met gebruik van assert
-const validateUserCreateChaiShould = (req, res, next) => {
-    try {
-        req.body.firstName.should.not.be.empty.and.a('string')
-        req.body.lastName.should.not.be.empty.and.a('string')
-        req.body.emailAdress.should.not.be.empty.and.a('string').and.match(/@/)
-        next()
-    } catch (ex) {
-        return res.status(400).json({
-            status: 400,
-            message: ex.message,
-            data: {}
-        })
-    }
-}
 
 const validateEmail = (req, res, next) => {
     try {
@@ -106,28 +81,14 @@ const validateUniqueEmail = (req, res, next) => {
 
 
 
-const validateUserCreateChaiExpect = (req, res, next) => {
-    try {
-        chai.expect(req.body.firstName).to.not.be.empty
-        chai.expect(req.body.firstName).to.be.a('string')
-        next()
-    } catch (ex) {
-        return res.status(400).json({
-            status: 400,
-            message: ex.message,
-            data: {}
-        })
-    }
-}
-
 // Userroutes
-router.post('/api/users', validateUserCreateAssert, validateEmail, validateUniqueEmail, userController.create)
-router.get('/api/users', userController.getAll)
-router.get('/api/users/:userId', userController.getById)
+router.post('/api/user', validateUserCreateAssert, validateEmail, validateUniqueEmail, userController.create)
+router.get('/api/user', userController.getAll)
+router.get('/api/user/:userId', userController.getById)
 
 // Tijdelijke routes om niet bestaande routes op te vangen
-router.put('/api/users/:userId', notFound)
-router.delete('/api/users/:userId', notFound)
+router.put('/api/user/:userId', userController.update)
+router.delete('/api/user/:userId', userController.delete)
 
 
 module.exports = router

@@ -26,6 +26,66 @@ const userService = {
                 })
             }
         })
+    },
+
+    getById: (id, callback) => {
+        database.getById(id, (err, data) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                if (data) {
+                    callback(null, {
+                        message: `User found with id ${id}.`,
+                        data: data
+                    });
+                } else {
+                    callback(null, {
+                        message: `User not found with id ${id}.`,
+                        data: null
+                    });
+                }
+            }
+        })
+    },
+
+    update: (id, updatedUser, callback) => {
+        database.update(id, updatedUser, (err, data) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                if (data) {
+                    callback(null, {
+                        message: `User updated with id ${id}.`,
+                        data: data
+                    });
+                } else {
+                    callback(null, {
+                        message: `User not found with id ${id}.`,
+                        data: null
+                    });
+                }
+            }
+        })
+    },
+
+    delete: (id, callback) => {
+        database.delete(id, (err, data) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                if (data) {
+                    callback(null, {
+                        message: `User deleted with id ${id}.`,
+                        data: data
+                    });
+                } else {
+                    callback(null, {
+                        message: `User not found with id ${id}.`,
+                        data: null
+                    });
+                }
+            }
+        });
     }
 }
 
