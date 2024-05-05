@@ -66,6 +66,25 @@ const validateUserCreateChaiShould = (req, res, next) => {
     }
 }
 
+const validateEmail = (req, res, next) => {
+    try {
+        const email = req.body.emailAdress;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            throw new Error('Invalid email address');
+        }
+        next();
+    } catch (ex) {
+        return res.status(400).json({
+            status: 400,
+            message: ex.message,
+            data: {}
+        });
+    }
+};
+
+
+
 const validateUserCreateChaiExpect = (req, res, next) => {
     try {
         chai.expect(req.body.firstName).to.not.be.empty
@@ -81,7 +100,7 @@ const validateUserCreateChaiExpect = (req, res, next) => {
 }
 
 // Userroutes
-router.post('/api/users', validateUserCreateAssert, userController.create)
+router.post('/api/users', validateUserCreateAssert, validateEmail, userController.create)
 router.get('/api/users', userController.getAll)
 router.get('/api/users/:userId', userController.getById)
 
