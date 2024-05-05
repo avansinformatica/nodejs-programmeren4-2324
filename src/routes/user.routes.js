@@ -41,7 +41,6 @@ const validateUserCreateAssert = (req, res, next) => {
 }
 
 
-
 const validateEmail = (req, res, next) => {
     try {
         const email = req.body.emailAdress;
@@ -88,7 +87,7 @@ router.get('/api/user', userController.getAll)
 router.get('/api/user/:userId', userController.getById)
 
 // Tijdelijke routes om niet bestaande routes op te vangen
-router.put('/api/user/:userId', notFound)
+router.put('/api/user/:userId', userController.update)
 router.delete('/api/user/:userId', notFound)
 
 
