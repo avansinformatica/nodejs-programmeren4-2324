@@ -15,7 +15,17 @@ describe('UC201 Registreren als nieuwe user', () => {
      * Hiermee kun je code hergebruiken of initialiseren.
      */
     beforeEach((done) => {
-        console.log('Before each test')
+        const database = require("../src/dao/inmem-db");
+
+        database._data = [
+            {
+                id: 0,
+                firstName: 'Existing',
+                lastName: 'User',
+                emailAdress: 'existing@server.nl',
+            },
+        ];
+        database._index = 1;
         done()
     })
 
@@ -61,13 +71,27 @@ describe('UC201 Registreren als nieuwe user', () => {
         done()
     })
 
-    it.skip('TC-201-4 Gebruiker bestaat al', (done) => {
-        //
-        // Hier schrijf je jouw testcase.
-        //
-        done()
-    })
+    it('TC-201-4 Gebruiker bestaat al', (done) => {
+        // Stel dat de eerste request de gebruiker registreert
+        const duplicateUser = {
+            firstName: 'New',
+            lastName: 'User',
+            emailAdress: 'exisiting@server.nl',
+        };
 
+        chai.request(server)
+            .post('/api/users')
+            .send(duplicateUser)
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('status').equals("Error: Email already exists");
+
+                done()
+            });
+            done();
+    })
+    
     it('TC-201-5 Gebruiker succesvol geregistreerd', (done) => {
         chai.request(server)
             .post(endpointToTest)
@@ -91,5 +115,32 @@ describe('UC201 Registreren als nieuwe user', () => {
 
                 done()
             })
-    })
-})
+    });
+});
+
+// Path: test/user.get.test.js
+// New tests for fetching all users
+// New tests for fetching a user by ID
+describe("UC202 Retrieve user by ID", () => {
+    it("should return a user by their ID when valid ID is provided", (done) => {
+      chai
+        .request(server)
+        .get("/api/users/0") // Assuming there is a user with ID 0
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.an("object");
+          expect(res.body.data).to.have.property("id").eql(0);
+          done();
+        });
+    });
+ 
+    it("should return 404 when non-existing ID is provided", (done) => {
+      chai
+        .request(server)
+        .get("/api/users/999") // Assuming no user with ID 999
+        .end((err, res) => {
+          expect(res).to.have.status(404);
+          done();
+        });
+    });
+  });

@@ -1,9 +1,9 @@
+const { get } = require('../..')
 const database = require('../dao/inmem-db')
 const logger = require('../util/logger')
 
 const userService = {
     create: (user, callback) => {
-        logger.info('create user', user)
         database.add(user, (err, data) => {
             if (err) {
                 logger.info(
@@ -33,7 +33,59 @@ const userService = {
                 })
             }
         })
-    }
-}
+    },
 
+
+getById: (id, callback) => {
+    database.getById(id, (err, data) => {
+        if (err) {
+            callback(err, null)
+        } else {
+            callback(null, {
+                message: `Found user with id ${id}.`,
+                data: data
+            })
+        }
+    })
+},
+update: (id, updatedUser, callback) => {
+    database.update(id, updatedUser, (err, data) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        if (data) {
+          callback(null, {
+            message: `User updated with id ${id}.`,
+            data: data,
+          });
+        } else {
+          callback(null, {
+            message: `User not found with id ${id}.`,
+            data: null,
+          });
+        }
+      }
+    });
+  },
+ 
+  delete: (userId, callback) => {
+    database.delete(userId, (err, data) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        if (data) {
+          callback(null, {
+            message: `User deleted with id ${userId}.`,
+            data: data,
+          });
+        } else {
+          callback(null, {
+            message: `User not found with id ${userId}.`,
+            data: null,
+          });
+        }
+      }
+    });
+  },
+};
 module.exports = userService
