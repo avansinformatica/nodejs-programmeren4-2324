@@ -14,7 +14,7 @@ app.all('*', (req, res, next) => {
 })
 
 app.get('/', function (req, res) {
-    res.json({ message: 'Hello World' })
+    res.json({ message: "Welcome to Amin's Node.js Express server!" })
 })
 
 app.get('/api/info', (req, res) => {
