@@ -44,7 +44,7 @@ let userController = {
     },
 
     getById: (req, res, next) => {
-        const userId = req.params.userId
+        const userId = parseInt(req.params.userId);
         userService.getById(userId, (error, success) => {
             if (error) {
                 return next({
@@ -61,9 +61,45 @@ let userController = {
                 })
             }
         })
-    }
+    },
+    update: (req, res, next) => {
+        const userId = parseInt(req.params.userId);
+        const updatedData = req.body;
+        // TODO: Validate updatedData
+        userService.update(userId, updatedData, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: {}
+                });
+            }
+            if (success) {
+                res.status(200).json({
+                    status: success.status,
+                    message: success.message,
+                    data: success.data
+                });
+            }
+        });
+    },
 
-    // Todo: Implement the update and delete methods
-}
+    // Verwijder gebruiker
+    delete: (req, res, next) => {
+        const userId = parseInt(req.params.userId);
+        userService.delete(userId, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: {}
+                });
+            }
+            if (success) {
+                res.status(204).send();
+            }
+        });
+    }
+};
 
 module.exports = userController
