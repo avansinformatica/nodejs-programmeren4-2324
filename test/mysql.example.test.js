@@ -1,9 +1,16 @@
 process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
 process.env.LOGLEVEL = 'warn'
 
+const chai = require('chai')
+const chaiHttp = require('chai-http')
+const server = require('../index')
 const assert = require('assert')
+const logger = require('../src/util/logger')
 require('dotenv').config()
-const dbconnection = require('../../examples/mysql/mysql-pool-example')
+const db = require('../src/dao/mysql-db')
+
+chai.should()
+chai.use(chaiHttp)
 
 /**
  * Db queries to clear and fill the test database before each test.
@@ -48,7 +55,7 @@ describe('Example MySql testcase', () => {
         beforeEach((done) => {
             logger.debug('beforeEach called')
             // maak de testdatabase leeg zodat we onze testen kunnen uitvoeren.
-            dbconnection.getConnection(function (err, connection) {
+            db.getConnection(function (err, connection) {
                 if (err) throw err // not connected!
 
                 // Use the connection
@@ -68,83 +75,35 @@ describe('Example MySql testcase', () => {
             })
         })
 
-        it.skip('TC-201-1 should return valid error when required value is not present', (done) => {
+        it('TC-xyz should return valid user', (done) => {
             chai.request(server)
-                .post('/api/movie')
-                .send({
-                    // name is missing
-                    year: 1234,
-                    studio: 'pixar',
-                })
+                .get('/api/user')
                 .end((err, res) => {
                     assert.ifError(err)
-                    res.should.have.status(401)
-                    res.should.be.an('object')
-
-                    res.body.should.be
-                        .an('object')
-                        .that.has.all.keys('statusCode', 'message')
-                    statusCode.should.be.an('number')
-                    message.should.be.a('string').that.contains('error')
-                    done()
-                })
-        })
-
-        it('TC-201-2 should return a valid error when postal code is invalid', (done) => {
-            // Zelf verder aanvullen
-            done()
-        })
-
-        // En hier komen meer testcases
-    })
-
-    describe('UC-303 Lijst van maaltijden opvragen /api/meal', () => {
-        //
-        beforeEach((done) => {
-            logger.debug('beforeEach called')
-            // maak de testdatabase opnieuw aan zodat we onze testen kunnen uitvoeren.
-            dbconnection.getConnection(function (err, connection) {
-                if (err) throw err // not connected!
-                connection.query(
-                    CLEAR_DB + INSERT_USER + INSERT_MEALS,
-                    function (error, results, fields) {
-                        // When done with the connection, release it.
-                        connection.release()
-                        // Handle error after the release.
-                        if (error) throw error
-                        // Let op dat je done() pas aanroept als de query callback eindigt!
-                        logger.debug('beforeEach done')
-                        done()
-                    }
-                )
-            })
-        })
-
-        it('TC-303-1 Lijst van maaltijden wordt succesvol geretourneerd', (done) => {
-            chai.request(server)
-                .get('/api/movie')
-                .set(
-                    'authorization',
-                    'Bearer ' + jwt.sign({ id: 1 }, jwtSecretKey)
-                )
-                .end((err, res) => {
-                    assert.ifError(err)
-
                     res.should.have.status(200)
                     res.should.be.an('object')
 
                     res.body.should.be
                         .an('object')
-                        .that.has.all.keys('results', 'statusCode')
+                        .that.has.all.keys('status', 'message', 'data')
+                    res.body.status.should.be.a('number')
 
-                    const { statusCode, results } = res.body
-                    statusCode.should.be.an('number')
-                    results.should.be.an('array').that.has.length(2)
-                    results[0].name.should.equal('Meal A')
-                    results[0].id.should.equal(1)
+                    const data = res.body.data
+
+                    data.should.be.an('array').that.has.lengthOf(1)
+                    data[0].should.be.an('object').that.has.all.keys(
+                        'id',
+                        'firstName',
+                        'lastName'
+                        // 'emailAdress',
+                        // 'password',
+                        // 'street',
+                        // 'city'
+                    )
+                    data[0].id.should.be.a('number').that.equals(1)
+                    // Enzovoort!
                     done()
                 })
         })
-        // En hier komen meer testcases
     })
 })

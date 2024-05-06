@@ -65,7 +65,13 @@ jobs:
                 ports:
                     - 3306
         steps:
-            - uses: actions/checkout@v2
+            - name: Download artifact from build job
+              uses: actions/download-artifact@v4
+              with:
+                  name: node-app
+
+            - name: Unzip artifact for tests
+              run: unzip release.zip
 
             - name: Start MySQL connection from host
               run: |
@@ -78,10 +84,6 @@ jobs:
               run: |
                   mysql -uroot -p${{env.MYSQL_ROOT_PASSWORD}} ${{env.DB_DATABASE}} < share-a-meal.sql
                   mysql -uroot -p${{env.MYSQL_ROOT_PASSWORD}} ${{env.DB_DATABASE}} -e "SHOW TABLES;"
-
-            - name: npm install
-              run: |
-                  npm install
 
             - name: npm test
               run: |
