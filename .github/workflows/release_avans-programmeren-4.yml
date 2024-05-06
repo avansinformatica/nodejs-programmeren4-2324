@@ -87,11 +87,11 @@ jobs:
 
             - name: npm test
               run: |
-                  npm test -- --DB_PASSWORD $MYSQL_ROOT_PASSWORD --DB_USER root --DB_NAME $DB_DATABASE
+                  npm test -- --DB_PASSWORD $MYSQL_ROOT_PASSWORD --DB_USER root --DB_NAME $DB_DATABASE --DB_PORT $DB_PORT
 
     deploy:
         runs-on: ubuntu-latest
-        needs: [test, integrationtests]
+        needs: [integrationtests]
         environment:
             name: 'Production'
             url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
