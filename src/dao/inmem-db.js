@@ -51,16 +51,24 @@ const database = {
     },
     
     getById(id, callback) {
-        // Simuleer een asynchrone operatie
+        // Simulate an asynchronous operation
         setTimeout(() => {
-            if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+            // Convert id to a number
+            const numId = Number(id);
+
+            // Find the item with the specified id
+            const item = this._data.find((item) => item.id === numId)
+
+            if (item) {
+                // Call the callback with the item as argument
+                callback(null, item)
             } else {
-                callback(null, this._data[id])
+                // If the item doesn't exist, call the callback with an error
+                callback({ message: `Error: id ${id} does not exist!` }, null)
             }
         }, this._delayTime)
     },
-
+    
     add(item, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
