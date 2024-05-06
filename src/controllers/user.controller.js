@@ -1,11 +1,10 @@
 const userService = require('../services/user.service')
+const logger = require('../util/logger')
 
 let userController = {
     create: (req, res, next) => {
         const user = req.body
-        //
-        // Todo: Validate user input
-        //
+        logger.info('create user', user.firstName, user.lastName)
         userService.create(user, (error, success) => {
             if (error) {
                 return next({
@@ -25,6 +24,7 @@ let userController = {
     },
 
     getAll: (req, res, next) => {
+        logger.trace('getAll')
         userService.getAll((error, success) => {
             if (error) {
                 return next({
@@ -45,6 +45,7 @@ let userController = {
 
     getById: (req, res, next) => {
         const userId = req.params.userId
+        logger.trace('userController: getById', userId)
         userService.getById(userId, (error, success) => {
             if (error) {
                 return next({

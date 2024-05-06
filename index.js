@@ -1,5 +1,6 @@
 const express = require('express')
 const userRoutes = require('./src/routes/user.routes')
+const logger = require('./src/util/logger')
 
 const app = express()
 
@@ -8,15 +9,7 @@ app.use(express.json())
 
 const port = process.env.PORT || 3000
 
-app.all('*', (req, res, next) => {
-    console.log('Request:', req.method, req.url)
-    next()
-})
-
-app.get('/', function (req, res) {
-    res.json({ message: 'Hello World' })
-})
-
+// Dit is een voorbeeld van een simpele route
 app.get('/api/info', (req, res) => {
     console.log('GET /api/info')
     const info = {
@@ -30,7 +23,7 @@ app.get('/api/info', (req, res) => {
 // Hier komen alle routes
 app.use(userRoutes)
 
-// Hier komt de route error handler te staan!
+// Route error handler
 app.use((req, res, next) => {
     next({
         status: 404,
@@ -49,7 +42,7 @@ app.use((error, req, res, next) => {
 })
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
+    logger.info(`Server is running on port ${port}`)
 })
 
 // Deze export is nodig zodat Chai de server kan opstarten
