@@ -51,16 +51,24 @@ const database = {
     },
     
     getById(id, callback) {
-        // Simuleer een asynchrone operatie
+        // Simulate an asynchronous operation
         setTimeout(() => {
-            if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
+            // Convert id to a number
+            const numId = Number(id);
+
+            // Find the item with the specified id
+            const item = this._data.find((item) => item.id === numId)
+
+            if (item) {
+                // Call the callback with the item as argument
+                callback(null, item)
             } else {
-                callback(null, this._data[id])
+                // If the item doesn't exist, call the callback with an error
+                callback({ message: `Error: id ${id} does not exist!` }, null)
             }
         }, this._delayTime)
     },
-
+    
     add(item, callback) {
         // Simuleer een asynchrone operatie
         setTimeout(() => {
@@ -98,19 +106,23 @@ const database = {
     delete(id, callback) {
         // Simulate an asynchronous operation
         setTimeout(() => {
-            if (id < 0 || id > this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
-            } else {
-                // Find the item with the specified id
-                const item = this._data.find((item) => item.id === id)
-
+            // Convert id to a number
+            const numId = Number(id);
+    
+            // Find the item with the specified id
+            const item = this._data.find((item) => item.id === numId)
+    
+            if (item) {
                 // Remove the item from the array
                 const index = this._data.indexOf(item)
                 const deletedItem = this._data.splice(index, 1)[0]
-
+    
                 // Call the callback at the end of the operation
-                // with the deleted item as argument, or null if an error occurred
+                // with the deleted item as argument
                 callback(null, deletedItem)
+            } else {
+                // If the item doesn't exist, call the callback with an error
+                callback({ message: `Error: id ${id} does not exist!` }, null)
             }
         }, this._delayTime)
     }
