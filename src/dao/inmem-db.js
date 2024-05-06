@@ -85,24 +85,27 @@ const database = {
 
     // Voeg zelf de overige database functionaliteit toe
     update(id, newData, callback) {
-        // Simuleer een asynchrone operatie
+        // Simulate an asynchronous operation
         setTimeout(() => {
-            if (id < 0 || id >= this._data.length) {
-                callback({ message: `Error: id ${id} does not exist!` }, null)
-            } else {
-                // Vind het item met de opgegeven id
-                const item = this._data[id]
+            // Convert id to a number
+            const numId = Number(id);
 
-                // Update de velden met de nieuwe data
+            // Find the item with the specified id
+            const item = this._data.find((item) => item.id === numId)
+
+            if (item) {
+                // Update the fields with the new data
                 Object.assign(item, newData)
 
-                // Roep de callback aan het einde van de operatie
-                // met het bijgewerkte item als argument, of null als er een fout is opgetreden
+                // Call the callback at the end of the operation
+                // with the updated item as argument
                 callback(null, item)
+            } else {
+                // If the item doesn't exist, call the callback with an error
+                callback({ message: `Error: id ${id} does not exist!` }, null)
             }
         }, this._delayTime)
     },
-
     delete(id, callback) {
         // Simulate an asynchronous operation
         setTimeout(() => {
