@@ -81,3 +81,6 @@ pool.getConnection(function (err, connection) {
         }
     )
 })
+
+// Export the pool, so that testcases can use it
+module.exports = pool
