@@ -66,8 +66,8 @@ pool.getConnection(function (err, connection) {
             connection.release()
 
             // Handle error after the release.
-            if (err) {
-                logger.error(err)
+            if (error) {
+                logger.error(error)
                 // in je server: next(err)!
                 return 1 // exit the program, alleen hier omdat het een voorbeeld is
             }
