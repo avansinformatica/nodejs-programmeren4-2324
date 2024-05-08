@@ -101,7 +101,7 @@ jobs:
             - name: Download artifact from build job
               uses: actions/download-artifact@v3
               with:
-                  name: nodejs_programmeren_4_2324
+                  name: node-app
 
             - name: Unzip artifact for deployment
               run: unzip release.zip
