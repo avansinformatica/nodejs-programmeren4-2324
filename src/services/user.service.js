@@ -64,6 +64,37 @@ const userService = {
                 }
             )
         })
+    },
+
+    getProfile: (userId, callback) => {
+        logger.info('getProfile userId:', userId)
+
+        db.getConnection(function (err, connection) {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+
+            connection.query(
+                'SELECT id, firstName, lastName FROM `user` WHERE id = ?',
+                [userId],
+                function (error, results, fields) {
+                    connection.release()
+
+                    if (error) {
+                        logger.error(error)
+                        callback(error, null)
+                    } else {
+                        logger.debug(results)
+                        callback(null, {
+                            message: `Found ${results.length} user.`,
+                            data: results
+                        })
+                    }
+                }
+            )
+        })
     }
 }
 
