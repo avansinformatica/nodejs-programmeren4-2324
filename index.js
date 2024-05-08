@@ -1,6 +1,6 @@
 const express = require('express')
 const userRoutes = require('./src/routes/user.routes')
-const authRoutes = require('./src/routes/authentication.routes')
+const authRoutes = require('./src/routes/authentication.routes').routes
 const logger = require('./src/util/logger')
 
 const app = express()

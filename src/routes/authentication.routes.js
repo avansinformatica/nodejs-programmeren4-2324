@@ -2,8 +2,11 @@
 // Authentication routes
 //
 const assert = require('assert')
+const jwt = require('jsonwebtoken')
+const jwtSecretKey = require('../util/config').secretkey
 const routes = require('express').Router()
 const AuthController = require('../controllers/authentication.controller')
+const logger = require('../util/logger')
 
 //
 //
@@ -34,14 +37,15 @@ function validateLogin(req, res, next) {
 //
 function validateToken(req, res, next) {
     logger.info('validateToken called')
-    // logger.trace(req.headers)
+    logger.trace('Headers:', req.headers)
     // The headers should contain the authorization-field with value 'Bearer [token]'
     const authHeader = req.headers.authorization
     if (!authHeader) {
         logger.warn('Authorization header missing!')
-        res.status(401).json({
-            error: 'Authorization header missing!',
-            datetime: new Date().toISOString()
+        next({
+            status: 401,
+            message: 'Authorization header missing!',
+            data: {}
         })
     } else {
         // Strip the word 'Bearer ' from the headervalue
@@ -50,15 +54,20 @@ function validateToken(req, res, next) {
         jwt.verify(token, jwtSecretKey, (err, payload) => {
             if (err) {
                 logger.warn('Not authorized')
-                res.status(401).json({
-                    error: 'Not authorized',
-                    datetime: new Date().toISOString()
+                next({
+                    status: 401,
+                    message: 'Not authorized!',
+                    data: {}
                 })
             }
             if (payload) {
                 logger.debug('token is valid', payload)
-                // User heeft toegang. Voeg UserId uit payload toe aan
-                // request, voor ieder volgend endpoint.
+                /**
+                 * User heeft toegang.
+                 * BELANGRIJK! Voeg UserId uit payload toe aan request,
+                 * zodat die voor ieder volgend endpoint beschikbaar is.
+                 * Je hebt dan altijd toegang tot de userId van de ingelogde gebruiker.
+                 */
                 req.userId = payload.userId
                 next()
             }
@@ -68,4 +77,4 @@ function validateToken(req, res, next) {
 
 routes.post('/login', validateLogin, AuthController.login)
 
-module.exports = routes
+module.exports = { routes, validateToken }
