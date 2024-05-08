@@ -5,7 +5,7 @@ const mysql = require('mysql2')
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    database: 'shareameal'
+    database: 'share-a-meal'
 })
 
 // A simple SELECT query, without placeholders/prepared statements
