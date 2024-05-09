@@ -4,12 +4,16 @@ config:
         - name: 'warmup'
           duration: 1
           arrivalRate: 1
+
         - name: 'load test'
           duration: 30
           arrivalRate: 5
-        - name: 'ramp down'
+
+        - name: 'ramp up'
           duration: 30
           arrivalRate: 10
+          rampTo: 50
+
 scenarios:
     - flow:
           - post:
@@ -18,7 +22,7 @@ scenarios:
                     emailAdress: 'm.vandullemen@server.nl'
                     password: 'secret'
                 capture:
-                    json: '$.token'
+                    json: '$.data.token'
                     as: 'token'
           - get:
                 url: '/api/user'

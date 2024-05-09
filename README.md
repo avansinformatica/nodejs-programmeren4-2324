@@ -13,3 +13,9 @@ To run the server in your local development environment, type `npm run dev`.
 ## Run the tests
 
 To run the tests, type `npm test`.
+
+## Run the tests
+
+To run the (Artillery)[http] performancetests, type `npm run performance`.
+
+
