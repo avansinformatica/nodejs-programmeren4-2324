@@ -95,7 +95,38 @@ const userService = {
                 }
             )
         })
-    }
+    },
+
+    update: (userId, updatedUser, callback) => {
+        logger.info('update user', userId, updatedUser);
+    
+        db.getConnection(function (err, connection) {
+          if (err) {
+            logger.error(err);
+            callback(err, null);
+            return;
+          }
+    
+          connection.query(
+            'UPDATE `user` SET ? WHERE id = ?',
+            [updatedUser, userId],
+            function (error, results, fields) {
+              connection.release();
+    
+              if (error) {
+                logger.error(error);
+                callback(error, null);
+              } else {
+                logger.trace(`User updated with id ${userId}.`);
+                callback(null, {
+                  message: `User updated with id ${userId}.`,
+                  data: results
+                });
+              }
+            }
+          );
+        });
+      }
 }
 
 module.exports = userService
