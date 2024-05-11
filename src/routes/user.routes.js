@@ -37,13 +37,18 @@ const validateUserCreate = (req, res, next) => {
     }
 }
 
+const logRequest = (req, res, next) => {
+    console.log('Request object:', req)
+    next()
+}
+
 // Userroutes
 router.post('/api/user', validateUserCreate, userController.create)
 router.get('/api/user', userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', userController.getById)
 router.put('/api/user/:userId', userController.update)
-
+router.delete('/api/user/:userId', logRequest, userController.deleteUser)
 
 // Tijdelijke routes om niet bestaande routes op te vangen
 router.put('/api/user/:userId', notFound)
