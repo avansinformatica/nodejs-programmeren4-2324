@@ -130,14 +130,28 @@ let userController = {
     // Todo: Implement the update and delete methods
 
     update: (req, res, next) => {
+        const user = req.body
         const userId = req.params.userId
         const updatedUser = req.body
+        const token = req.headers.authorization
         logger.trace(`userController: update user with id ${userId}`)
-        userService.update(userId, updatedUser, (error, result) => {
+        userService.update(userId, updatedUser, token, (error, result) => {
             if (error) {
-                // Behandel de fout
-                return next({
-                    status: error.status,
+                let statusCode
+                switch (error.message) {
+                    case 'Verplicht veld “emailAddress” ontbreekt':
+                    case 'PhoneNumber must only contain numbers':
+                        statusCode = 400
+                        break
+                    case 'Je bent niet de eigenaar van de data':
+                        statusCode = 403
+                        break
+                    default:
+                        statusCode = 500 // Internal Server Error
+                        break
+                }
+                return res.status(statusCode).json({
+                    status: statusCode,
                     message: error.message,
                     data: {}
                 })

@@ -3,6 +3,8 @@ const logger = require('../util/logger')
 
 const db = require('../dao/mysql-db')
 
+const jwt = require('jsonwebtoken')
+
 const userService = {
     create: (newUser, callback) => {
         logger.info('create user:', newUser)
@@ -199,35 +201,68 @@ const userService = {
         })
     },
 
-    update: (userId, updatedUser, callback) => {
+    update: (userId, updatedUser, token, callback) => {
         logger.info('update user', userId, updatedUser)
 
-        db.getConnection(function (err, connection) {
-            if (err) {
-                logger.error(err)
-                callback(err, null)
-                return
-            }
+        const phoneRegex = /^\+?[\d\s()-]*$/
 
-            connection.query(
-                'UPDATE `user` SET ? WHERE id = ?',
-                [updatedUser, userId],
-                function (error, results, fields) {
-                    connection.release()
+        const decoded = jwt.decode(token.split(' ')[1])
 
-                    if (error) {
-                        logger.error(error)
-                        callback(error, null)
-                    } else {
-                        logger.trace(`User updated with id ${userId}.`)
-                        callback(null, {
-                            message: `User updated with id ${userId}.`,
-                            data: results
-                        })
+        let tokenUserId = decoded.userId
+
+        userId = parseInt(userId, 10) // Converteer naar integer met base 10
+
+        tokenUserId = parseInt(decoded.userId, 10) // Converteer naar integer met base 10
+
+        // console.log(tokenUserId)
+
+        // console.log(userId)
+
+        if (userId === tokenUserId) {
+            if (!updatedUser.emailAdress) {
+                return callback(
+                    new Error('Verplicht veld “emailAddress” ontbreekt'),
+                    null
+                )
+            } else if (!phoneRegex.test(updatedUser.phoneNumber)) {
+                return callback(
+                    new Error('PhoneNumber must only contain numbers'),
+                    null
+                )
+            } else {
+                db.getConnection(function (err, connection) {
+                    if (err) {
+                        logger.error(err)
+                        callback(err, null)
+                        return
                     }
-                }
+
+                    connection.query(
+                        'UPDATE `user` SET ? WHERE id = ?',
+                        [updatedUser, userId],
+                        function (error, results, fields) {
+                            connection.release()
+
+                            if (error) {
+                                logger.error(error)
+                                callback(error, null)
+                            } else {
+                                logger.trace(`User updated with id ${userId}.`)
+                                callback(null, {
+                                    message: `User updated with id ${userId}.`,
+                                    data: results
+                                })
+                            }
+                        }
+                    )
+                })
+            }
+        } else {
+            return callback(
+                new Error('Je bent niet de eigenaar van de data'),
+                null
             )
-        })
+        }
     },
 
     delete: (userId, callback) => {
