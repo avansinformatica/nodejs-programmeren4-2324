@@ -48,12 +48,7 @@ router.get('/api/user', userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', validateToken, userController.getById)
 router.put('/api/user/:userId', validateToken, userController.update)
-router.delete(
-    '/api/user/:userId',
-    validateToken,
-    logRequest,
-    userController.deleteUser
-)
+router.delete('/api/user/:userId', validateToken, userController.deleteUser)
 
 // Tijdelijke routes om niet bestaande routes op te vangen
 router.put('/api/user/:userId', notFound)

@@ -168,11 +168,21 @@ let userController = {
 
     deleteUser: (req, res, next) => {
         const userId = req.params.userId
+        const token = req.headers.authorization
         logger.trace('userController: deleteUser', userId)
-        userService.delete(userId, (error, success) => {
+        userService.delete(userId, token, (error, success) => {
             if (error) {
-                return next({
-                    status: error.status,
+                let statusCode
+                switch (error.message) {
+                    case 'Je bent niet de eigenaar van de data':
+                        statusCode = 403
+                        break
+                    default:
+                        statusCode = 500 // Internal Server Error
+                        break
+                }
+                return res.status(statusCode).json({
+                    status: statusCode,
                     message: error.message,
                     data: {}
                 })

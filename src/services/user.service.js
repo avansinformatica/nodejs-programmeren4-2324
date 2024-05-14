@@ -265,35 +265,50 @@ const userService = {
         }
     },
 
-    delete: (userId, callback) => {
+    delete: (userId, token, callback) => {
         logger.info('delete user', userId)
 
-        db.getConnection(function (err, connection) {
-            if (err) {
-                logger.error(err)
-                callback(err, null)
-                return
-            }
+        const decoded = jwt.decode(token.split(' ')[1])
 
-            connection.query(
-                'DELETE FROM `user` WHERE id = ?',
-                [userId],
-                function (error, results, fields) {
-                    connection.release()
+        let tokenUserId = decoded.userId
 
-                    if (error) {
-                        logger.error(error)
-                        callback(error, null)
-                    } else {
-                        logger.debug(results)
-                        callback(null, {
-                            message: `User with id ${userId} deleted.`,
-                            data: results
-                        })
-                    }
+        userId = parseInt(userId, 10) // Converteer naar integer met base 10
+
+        tokenUserId = parseInt(decoded.userId, 10) // Converteer naar integer met base 10
+
+        if (userId === tokenUserId) {
+            db.getConnection(function (err, connection) {
+                if (err) {
+                    logger.error(err)
+                    callback(err, null)
+                    return
                 }
+
+                connection.query(
+                    'DELETE FROM `user` WHERE id = ?',
+                    [userId],
+                    function (error, results, fields) {
+                        connection.release()
+
+                        if (error) {
+                            logger.error(error)
+                            callback(error, null)
+                        } else {
+                            logger.debug(results)
+                            callback(null, {
+                                message: `User with id ${userId} deleted.`,
+                                data: results
+                            })
+                        }
+                    }
+                )
+            })
+        } else {
+            return callback(
+                new Error('Je bent niet de eigenaar van de data'),
+                null
             )
-        })
+        }
     }
 }
 
