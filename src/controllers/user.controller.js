@@ -7,17 +7,39 @@ let userController = {
         logger.info('create user', user.firstName, user.lastName)
         userService.create(user, (error, success) => {
             if (error) {
-                return next({
-                    status: error.status,
+                let statusCode
+                switch (error.message) {
+                    case 'Invalid email address':
+                    case 'Password must be at least 8 characters long':
+                    case 'Missing required fields':
+                        statusCode = 400
+                        break
+                    case 'User already exists':
+                    case 'User with this email address already exists':
+                        statusCode = 403
+                        break
+                    default:
+                        statusCode = 500 // Internal Server Error
+                        break
+                }
+                return res.status(statusCode).json({
+                    status: statusCode,
                     message: error.message,
                     data: {}
                 })
             }
             if (success) {
-                res.status(200).json({
-                    status: success.status,
+                user.userId = success.data.userId
+                return res.status(200).json({
+                    status: 200,
                     message: success.message,
-                    data: success.data
+                    data: {
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        emailAdress: user.emailAdress,
+                        password: user.password,
+                        id: user.userId
+                    }
                 })
             }
         })
@@ -25,15 +47,28 @@ let userController = {
 
     getAll: (req, res, next) => {
         logger.trace('getAll')
-        userService.getAll((error, success) => {
+
+        const { firstName, lastName, isActive } = req.query // Gebruik req.query om query parameters op te halen
+
+        userService.getAll(firstName, lastName, isActive, (error, success) => {
             if (error) {
-                return next({
-                    status: error.status,
+                // Handle error
+                let statusCode
+                switch (error.message) {
+                    case 'Missing required fields':
+                        statusCode = 200
+                        break
+                    default:
+                        statusCode = 200 // Internal Server Error
+                        break
+                }
+                return res.status(statusCode).json({
+                    status: statusCode,
                     message: error.message,
                     data: {}
                 })
-            }
-            if (success) {
+            } else {
+                // Handle success
                 res.status(200).json({
                     status: 200,
                     message: success.message,
