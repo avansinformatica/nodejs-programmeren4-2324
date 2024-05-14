@@ -46,7 +46,7 @@ const logRequest = (req, res, next) => {
 router.post('/api/user', validateUserCreate, userController.create)
 router.get('/api/user', userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
-router.get('/api/user/:userId', userController.getById)
+router.get('/api/user/:userId', validateToken, userController.getById)
 router.put('/api/user/:userId', userController.update)
 router.delete('/api/user/:userId', logRequest, userController.deleteUser)
 

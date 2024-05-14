@@ -90,11 +90,18 @@ let userController = {
                 })
             }
             if (success) {
-                res.status(200).json({
-                    status: success.status,
-                    message: success.message,
-                    data: success.data
-                })
+                if (success.message === 'Found 0 user.') {
+                    res.status(404).json({
+                        message: 'Gebruiker-ID bestaat niet',
+                        data: {}
+                    })
+                } else {
+                    res.status(200).json({
+                        status: success.status,
+                        message: success.message,
+                        data: success.data
+                    })
+                }
             }
         })
     },
