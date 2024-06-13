@@ -5,9 +5,10 @@ const jwt = require('jsonwebtoken')
 const db = require('../dao/mysql-db')
 // const validateEmail = require('../util/emailvalidator')
 const logger = require('../util/logger')
+const { register } = require('../controllers/authentication.controller')
 const jwtSecretKey = require('../util/config').secretkey
 
-const authController = {
+const authService = {
     login: (userCredentials, callback) => {
         logger.debug('login')
 
@@ -19,13 +20,13 @@ const authController = {
             if (connection) {
                 // 1. Kijk of deze useraccount bestaat.
                 connection.query(
-                    'SELECT `id`, `emailAdress`, `password`, `firstName`, `lastName` FROM `user` WHERE `emailAdress` = ?',
+                    'SELECT `id`, `emailAdress`, `password`, `firstName`, `lastName` FROM `user` WHERE `emailAdress` = ? ',
                     [userCredentials.emailAdress],
                     (err, rows, fields) => {
                         connection.release()
                         if (err) {
                             logger.error('Error: ', err.toString())
-                            callback(error.message, null)
+                            callback(err.message, null)
                         }
                         if (rows) {
                             // 2. Er was een resultaat, check het password.
@@ -79,7 +80,57 @@ const authController = {
                 )
             }
         })
+    },
+    register: (data, callback) => {
+        logger.debug('register')
+
+        db.getConnection((err, connection) => {
+            if (err) {
+                logger.error(err)
+                callback(err.message, null)
+            }
+            if (connection) {
+                connection.query(
+                    'INSERT INTO `user` (`emailAdress`, `password`, `firstName`, `lastName`, `phoneNumber`, `street`, `city`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    [
+                        data.emailAdress,
+                        data.password,
+                        data.firstName,
+                        data.lastName,
+                        data.phoneNumber,
+                        data.street,
+                        data.city
+                    ],
+                    (err, result) => {
+                        if (err) {
+                            connection.release()
+                            logger.error('Error: ', err.toString())
+                            callback(err.message, null)
+                        } else {
+                            connection.query(
+                                'SELECT `id` FROM `user` WHERE `emailAdress` = ?',
+                                [data.emailAdress],
+                                (err, rows) => {
+                                    connection.release()
+                                    if (err) {
+                                        logger.error('Error: ', err.toString())
+                                        callback(err.message, null)
+                                    } else {
+                                        logger.trace('User registered')
+                                        callback(null, {
+                                            status: 201,
+                                            message: 'User registered',
+                                            data: rows[0]
+                                        })
+                                    }
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+        })
     }
 }
 
-module.exports = authController
+module.exports = authService

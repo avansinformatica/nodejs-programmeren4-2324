@@ -123,6 +123,6 @@ jobs:
               id: deploy-to-webapp
               uses: azure/webapps-deploy@v3
               with:
-                  app-name: 'avans-programmeren-4'
+                  app-name: 'Programmeren4'
                   slot-name: 'Production'
                   package: .

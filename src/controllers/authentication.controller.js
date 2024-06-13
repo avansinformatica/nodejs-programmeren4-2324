@@ -24,6 +24,24 @@ const authController = {
                 })
             }
         })
+    },
+    register: (req, res, next) => {
+        authService.register(req.body, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: []
+                })
+            }
+            if (success) {
+                res.status(201).json({
+                    status: success.status,
+                    message: success.message,
+                    data: success.data
+                })
+            }
+        })
     }
 }
 
