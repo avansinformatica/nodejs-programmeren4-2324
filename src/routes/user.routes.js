@@ -39,7 +39,7 @@ const validateUserCreate = (req, res, next) => {
 
 // Userroutes
 router.post('/api/user', validateUserCreate, userController.create)
-router.get('/api/user', userController.getAll)
+router.get('/api/user', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
 router.get('/api/user/:userId', userController.getById)
 
