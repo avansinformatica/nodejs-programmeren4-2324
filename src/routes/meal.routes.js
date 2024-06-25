@@ -89,5 +89,7 @@ router.put(
     validateMealUpdate,
     mealController.update
 )
+router.get('/meal', mealController.getAll)
+router.get('/meal/:mealId', mealController.getMealById)
 
 module.exports = router

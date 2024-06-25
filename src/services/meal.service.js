@@ -1,6 +1,8 @@
 const pool = require('../dao/mysql-db')
 const logger = require('../util/logger')
 
+const db = require('../dao/mysql-db')
+
 const mealService = {
     create: (meal, callback) => {
         logger.info('create meal', meal)
@@ -94,6 +96,76 @@ const mealService = {
                 logger.info('error updating meal: ', 'unauthorized')
                 callback({ message: 'unauthorized', status: 403 }, null)
             }
+        })
+    },
+    getAll: (callback) => {
+        logger.info('getAll')
+
+        db.getConnection(function (err, connection) {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+
+            connection.query(
+                'SELECT * FROM `meal`',
+                function (error, results, fields) {
+                    connection.release()
+
+                    if (error) {
+                        logger.error(error)
+                        callback(error, null)
+                    } else {
+                        logger.debug(results)
+                        callback(null, {
+                            message: `Found ${results.length} meals.`,
+                            data: results
+                        })
+                    }
+                }
+            )
+        })
+    },
+
+    getMealById: (mealId, callback) => {
+        logger.info('getById userId: ' + mealId)
+
+        db.getConnection(function (err, connection) {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+
+            connection.query(
+                'SELECT *' + 'FROM `meal` ' + 'WHERE `id` = ?',
+                [mealId],
+                function (error, results) {
+                    connection.release()
+
+                    if (error) {
+                        logger.error(error)
+                        callback(error, null)
+                    } else if (results.length === 0) {
+                        logger.info(`Meal with id ${mealId} not found`)
+                        callback(null, {
+                            status: 404,
+                            message: 'Meal not found',
+                            data: {}
+                        })
+                    } else {
+                        logger.debug(results)
+                        callback(null, {
+                            status: 200,
+                            message: `Found ${results.length} Meal${
+                                results.length !== 1 ? 'S' : ''
+                            }.`,
+                            data: results
+                        })
+                    }
+                }
+            )
         })
     }
 }
