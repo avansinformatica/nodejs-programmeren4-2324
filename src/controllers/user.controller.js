@@ -83,6 +83,27 @@ let userController = {
                 })
             }
         })
+    },
+    updateUser: (req, res, next) => {
+        const userId = req.userId
+        const user = req.body
+        logger.info('update user', userId, user.firstName, user.lastName)
+        userService.updateUser(userId, user, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status,
+                    message: error.message,
+                    data: {}
+                })
+            }
+            if (success) {
+                res.status(200).json({
+                    status: success.status,
+                    message: success.message,
+                    data: success.data
+                })
+            }
+        })
     }
 
     // Todo: Implement the update and delete methods

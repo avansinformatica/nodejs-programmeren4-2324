@@ -3,6 +3,7 @@ const logger = require('../util/logger')
 
 const db = require('../dao/mysql-db')
 const { get } = require('../..')
+const { updateUser } = require('../controllers/user.controller')
 
 const userService = {
     create: (user, callback) => {
@@ -135,6 +136,54 @@ const userService = {
                             message: `Found ${results.length} user${
                                 results.length !== 1 ? 's' : ''
                             }.`,
+                            data: results
+                        })
+                    }
+                }
+            )
+        })
+    },
+    updateUser: (userId, user, callback) => {
+        logger.info('update user', userId, user)
+
+        db.getConnection(function (err, connection) {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+
+            connection.query(
+                'UPDATE `user` SET `firstName` = ?, `lastName` = ?, `emailAdress` = ?, `phoneNumber` = ?, `street` = ?, `city` = ? WHERE `id` = ?',
+                [
+                    user.firstName,
+                    user.lastName,
+                    user.emailAdress,
+                    user.phoneNumber,
+                    user.street,
+                    user.city,
+                    userId
+                ],
+                function (error, results) {
+                    connection.release()
+
+                    if (error) {
+                        logger.error(error)
+                        callback(error, null)
+                    } else if (results.affectedRows === 0) {
+                        // No user found, return 404
+                        logger.info(`User with ID ${userId} not found`)
+                        callback(null, {
+                            status: 404,
+                            message: 'User not found',
+                            data: {}
+                        })
+                    } else {
+                        // User updated, return user details
+                        logger.debug(results)
+                        callback(null, {
+                            status: 200,
+                            message: user,
                             data: results
                         })
                     }
