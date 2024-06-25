@@ -40,12 +40,54 @@ const validateMealCreate = (req, res, next) => {
         })
     }
 }
+const validateMealUpdate = (req, res, next) => {
+    try {
+        const body = req.body
+        assert(body.name, 'Missing or incorrect name field')
+        assert(body.description, 'Missing or incorrect description field')
+        assert(body.price, 'Missing or incorrect price field')
+        chai.expect(body.name).to.not.be.empty
+        chai.expect(body.name).to.be.a('string')
+
+        chai.expect(body.description).to.not.be.empty
+        chai.expect(body.description).to.be.a('string')
+
+        chai.expect(body.price).to.not.be.null
+        chai.expect(body.price).to.be.a('number')
+        chai.expect(body.datetime).to.not.be.empty
+        chai.expect(new Date(body.datetime).toString() !== 'Invalid Date').to.be
+            .true
+        chai.expect(body.imageURL).to.not.be.empty
+        chai.expect(body.imageURL).to.be.a('string')
+        chai.expect(body.imageURL).to.match(
+            /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/
+        )
+        chai.expect(parseInt(body.cookId)).to.not.be.NaN
+        chai.expect(parseInt(body.cookId)).to.be.a('number')
+
+        logger.trace('Meal successfully validated')
+        next()
+    } catch (ex) {
+        logger.trace('Meal validation failed:', ex.message)
+        next({
+            status: 400,
+            message: ex.message,
+            data: {}
+        })
+    }
+}
 
 router.post(
     '/meal/create',
     validateToken,
     validateMealCreate,
     mealController.create
+)
+router.put(
+    '/meal/update',
+    validateToken,
+    validateMealUpdate,
+    mealController.update
 )
 
 module.exports = router

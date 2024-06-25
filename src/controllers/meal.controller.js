@@ -23,7 +23,30 @@ let mealController = {
                 })
             }
         })
+    },
+    update: (req, res, next) => {
+        const meal = req.body
+        const mealId = req.body.mealId
+        const cookId = req.userId
+        logger.info(cookId)
+        logger.info('update meal', mealId)
+
+        mealService.update(mealId, meal, cookId, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status || 500,
+                    message: error.message,
+                    data: {}
+                })
+            }
+            if (success) {
+                res.status(200).json({
+                    status: success.status || 200,
+                    message: success.message,
+                    data: success.data
+                })
+            }
+        })
     }
 }
-
 module.exports = mealController
