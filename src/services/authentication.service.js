@@ -22,7 +22,7 @@ const authService = {
                 connection.query(
                     'SELECT `id`, `emailAdress`, `password`, `firstName`, `lastName` FROM `user` WHERE `emailAdress` = ? ',
                     [userCredentials.emailAdress],
-                    (err, rows, fields) => {
+                    (err, rows) => {
                         connection.release()
                         if (err) {
                             logger.error('Error: ', err.toString())
@@ -61,15 +61,23 @@ const authService = {
                                         })
                                     }
                                 )
-                            } else {
-                                logger.trace(
-                                    'User not found or password invalid'
-                                )
+                            } else if (rows.affectedRows === 0) {
+                                logger.trace('User not found')
                                 callback(
                                     {
-                                        status: 409,
+                                        status: 404,
+                                        message: 'User not found',
+                                        data: {}
+                                    },
+                                    null
+                                )
+                            } else {
+                                logger.trace('email or password invalid')
+                                callback(
+                                    {
+                                        status: 404,
                                         message:
-                                            'User not found or password invalid',
+                                            'User not found or the combination of email and password invalid',
                                         data: {}
                                     },
                                     null
@@ -90,38 +98,67 @@ const authService = {
                 callback(err.message, null)
             }
             if (connection) {
+                // First, check if the email already exists
                 connection.query(
-                    'INSERT INTO `user` (`emailAdress`, `password`, `firstName`, `lastName`, `phoneNumber`, `street`, `city`) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    [
-                        data.emailAdress,
-                        data.password,
-                        data.firstName,
-                        data.lastName,
-                        data.phoneNumber,
-                        data.street,
-                        data.city
-                    ],
-                    (err, result) => {
+                    'SELECT `id` FROM `user` WHERE `emailAdress` = ?',
+                    [data.emailAdress],
+                    (err, results) => {
                         if (err) {
                             connection.release()
                             logger.error('Error: ', err.toString())
                             callback(err.message, null)
+                        } else if (results.length > 0) {
+                            // Email already exists, return 400
+                            connection.release()
+                            logger.warn('Email already exists')
+                            callback(null, {
+                                status: 400,
+                                message: 'Email already exists',
+                                data: {}
+                            })
                         } else {
+                            // Email does not exist, proceed to insert new user
                             connection.query(
-                                'SELECT `id` FROM `user` WHERE `emailAdress` = ?',
-                                [data.emailAdress],
-                                (err, rows) => {
-                                    connection.release()
+                                'INSERT INTO `user` (`emailAdress`, `password`, `firstName`, `lastName`, `phoneNumber`, `street`, `city`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                                [
+                                    data.emailAdress,
+                                    data.password,
+                                    data.firstName,
+                                    data.lastName,
+                                    data.phoneNumber,
+                                    data.street,
+                                    data.city
+                                ],
+                                (err, result) => {
                                     if (err) {
+                                        connection.release()
                                         logger.error('Error: ', err.toString())
                                         callback(err.message, null)
                                     } else {
-                                        logger.trace('User registered')
-                                        callback(null, {
-                                            status: 201,
-                                            message: 'User registered',
-                                            data: rows[0]
-                                        })
+                                        connection.query(
+                                            'SELECT `id`, `emailAdress`, `firstName`, `lastName`, `phoneNumber`, `street`, `city` FROM `user` WHERE `emailAdress` = ?',
+                                            [data.emailAdress],
+                                            (err, rows) => {
+                                                connection.release()
+                                                if (err) {
+                                                    logger.error(
+                                                        'Error: ',
+                                                        err.toString()
+                                                    )
+                                                    callback(err.message, null)
+                                                } else {
+                                                    logger.trace(
+                                                        'User registered'
+                                                    )
+                                                    callback(null, {
+                                                        status: 201,
+                                                        message:
+                                                            'User registered',
+                                                        data: rows[0]
+                                                    })
+                                                }
+                                            }
+                                        )
                                     }
                                 }
                             )
