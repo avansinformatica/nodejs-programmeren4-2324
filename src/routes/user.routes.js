@@ -88,6 +88,7 @@ router.put(
     validateUserUpdate,
     userController.updateUser
 )
+router.delete('/api/user/delete', validateToken, userController.deleteUser)
 // Temporary routes to handle non-existent routes
 router.put('/api/user/:userId', notFound)
 router.delete('/api/user/:userId', notFound)
