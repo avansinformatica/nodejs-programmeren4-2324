@@ -91,5 +91,5 @@ router.put(
 )
 router.get('/meal', mealController.getAll)
 router.get('/meal/:mealId', mealController.getMealById)
-
+router.delete('/meal/delete', validateToken, mealController.delete)
 module.exports = router

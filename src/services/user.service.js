@@ -28,19 +28,6 @@ const userService = {
     getAll: (callback) => {
         logger.info('getAll')
 
-        // Deprecated: de 'oude' manier van werken, met de inmemory database
-        // database.getAll((err, data) => {
-        //     if (err) {
-        //         callback(err, null)
-        //     } else {
-        //         callback(null, {
-        //             message: `Found ${data.length} users.`,
-        //             data: data
-        //         })
-        //     }
-        // })
-
-        // Nieuwe manier van werken: met de MySQL database
         db.getConnection(function (err, connection) {
             if (err) {
                 logger.error(err)

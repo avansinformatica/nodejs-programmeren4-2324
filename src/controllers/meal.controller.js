@@ -87,6 +87,28 @@ let mealController = {
                 })
             }
         })
+    },
+    delete: (req, res, next) => {
+        const meal = req.body
+        const cookId = req.userId
+        logger.info(meal)
+        logger.info('delete meal', meal)
+        mealService.delete(meal, cookId, (error, success) => {
+            if (error) {
+                return next({
+                    status: error.status || 500,
+                    message: error.message,
+                    data: {}
+                })
+            }
+            if (success) {
+                res.status(200).json({
+                    status: success.status || 200,
+                    message: success.message,
+                    data: success.data
+                })
+            }
+        })
     }
 }
 module.exports = mealController

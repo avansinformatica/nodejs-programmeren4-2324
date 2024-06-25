@@ -167,6 +167,64 @@ const mealService = {
                 }
             )
         })
+    },
+    delete: (meal, cookId, callback) => {
+        const mealId = meal.mealId
+        const checkQuery = 'SELECT id, cookId FROM meal WHERE id = ?'
+        const checkParams = [mealId]
+
+        pool.query(checkQuery, checkParams, (checkErr, checkResult) => {
+            if (checkErr) {
+                logger.info(
+                    'error checking meal existence: ',
+                    checkErr.message || 'unknown error'
+                )
+                return callback(checkErr, null)
+            }
+
+            if (checkResult.length === 0) {
+                // Meal with given mealId does not exist
+                logger.info(`Meal with id ${mealId} does not exist.`)
+                return callback(
+                    {
+                        message: `Meal with id ${mealId} does not exist.`,
+                        status: 404
+                    },
+                    null
+                )
+            }
+
+            const meal = checkResult[0]
+
+            // Check if the cookId matches
+            if (meal.cookId !== cookId) {
+                logger.info('Unauthorized attempt to delete meal')
+                return callback({ message: 'Unauthorized', status: 403 }, null)
+            }
+
+            const deleteQuery = 'DELETE FROM `meal` WHERE id = ?'
+            const deleteParams = [mealId]
+
+            pool.query(deleteQuery, deleteParams, (err, result) => {
+                if (err) {
+                    logger.info(
+                        'error deleting meal: ',
+                        err.message || 'unknown error'
+                    )
+                    callback(err, null)
+                } else if (result.affectedRows === 0) {
+                    logger.info('error deleting meal: ', 'unauthorized')
+                    callback({ message: 'Unauthorized', status: 403 }, null)
+                } else {
+                    logger.trace(`Meal deleted with id ${mealId}.`)
+                    callback(null, {
+                        message: `Meal deleted with id ${mealId}.`,
+                        data: { id: mealId },
+                        status: 200
+                    })
+                }
+            })
+        })
     }
 }
 
