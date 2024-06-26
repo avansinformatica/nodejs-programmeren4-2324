@@ -7,25 +7,27 @@ const jwtSecretKey = require('../util/config').secretkey
 const routes = require('express').Router()
 const AuthController = require('../controllers/authentication.controller')
 const logger = require('../util/logger')
+const e = require('express')
 
 //
 //
 //
 function validateLogin(req, res, next) {
-    // Verify that we receive the expected input
     try {
+        // Verify that emailAdress is provided and is a string
         assert(
-            typeof req.body.emailAdress === 'string',
-            'email must be a string.'
+            req.body.emailAdress && typeof req.body.emailAdress === 'string',
+            'email is required and must be a string.'
         )
+        // Verify that password is provided and is a string
         assert(
-            typeof req.body.password === 'string',
-            'password must be a string.'
+            req.body.password && typeof req.body.password === 'string',
+            'password is required and must be a string.'
         )
         next()
     } catch (ex) {
         next({
-            status: 409,
+            status: 400,
             message: ex.toString(),
             data: {}
         })
