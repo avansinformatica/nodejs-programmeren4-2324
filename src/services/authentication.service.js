@@ -15,6 +15,7 @@ const authController = {
             if (err) {
                 logger.error(err)
                 callback(err.message, null)
+                return
             }
             if (connection) {
                 // 1. Kijk of deze useraccount bestaat.
@@ -25,15 +26,12 @@ const authController = {
                         connection.release()
                         if (err) {
                             logger.error('Error: ', err.toString())
-                            callback(error.message, null)
+                            callback(err.message, null)
+                            return
                         }
-                        if (rows) {
+                        if (rows && rows.length === 1) {
                             // 2. Er was een resultaat, check het password.
-                            if (
-                                rows &&
-                                rows.length === 1 &&
-                                rows[0].password == userCredentials.password
-                            ) {
+                            if (rows[0].password == userCredentials.password) {
                                 logger.debug(
                                     'passwords DID match, sending userinfo and valid token'
                                 )
@@ -49,6 +47,14 @@ const authController = {
                                     jwtSecretKey,
                                     { expiresIn: '12d' },
                                     (err, token) => {
+                                        if (err) {
+                                            logger.error(
+                                                'Error signing token: ',
+                                                err.toString()
+                                            )
+                                            callback(err.message, null)
+                                            return
+                                        }
                                         logger.info(
                                             'User logged in, sending: ',
                                             userinfo
@@ -61,19 +67,26 @@ const authController = {
                                     }
                                 )
                             } else {
-                                logger.debug(
-                                    'User not found or password invalid'
-                                )
+                                logger.debug('User found, but password invalid')
                                 callback(
                                     {
-                                        status: 409,
-                                        message:
-                                            'User not found or password invalid',
+                                        status: 400,
+                                        message: 'Password invalid',
                                         data: {}
                                     },
                                     null
                                 )
                             }
+                        } else {
+                            logger.debug('User not found')
+                            callback(
+                                {
+                                    status: 404,
+                                    message: 'User not found',
+                                    data: {}
+                                },
+                                null
+                            )
                         }
                     }
                 )
@@ -149,6 +162,16 @@ const authController = {
                                     data: {}
                                 })
                             }
+                        } else {
+                            logger.debug('User not found')
+                            callback(
+                                {
+                                    status: 404,
+                                    message: 'User not found',
+                                    data: {}
+                                },
+                                null
+                            )
                         }
                     }
                 )
