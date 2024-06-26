@@ -65,7 +65,7 @@ const authService = {
                                 logger.trace('User not found')
                                 callback(
                                     {
-                                        status: 404,
+                                        status: 400,
                                         message: 'User not found',
                                         data: {}
                                     },
@@ -75,7 +75,7 @@ const authService = {
                                 logger.trace('email or password invalid')
                                 callback(
                                     {
-                                        status: 404,
+                                        status: 400,
                                         message:
                                             'User not found or the combination of email and password invalid',
                                         data: {}

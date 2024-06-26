@@ -18,6 +18,23 @@ const notFound = (req, res, next) => {
 const validateUserCreate = (req, res, next) => {
     try {
         assert(req.body.firstName, 'Missing or incorrect firstName field')
+        assert(req.body.lastName, 'Missing or incorrect lastName field')
+        assert(req.body.emailAdress, 'Missing or incorrect emailAdress field')
+        assert(req.body.password, 'Missing or incorrect password field')
+        assert(req.body.city, 'Missing or incorrect city field')
+        assert(req.body.street, 'Missing or incorrect street field')
+
+        chai.expect(req.body.emailAdress).to.match(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            'Invalid emailAdress'
+        )
+        chai.expect(req.body.password).to.not.be.empty
+        chai.expect(req.body.password).to.be.a('string')
+
+        chai.expect(req.body.phoneNumber).to.match(
+            /^(?:\+31\s?|0)?6[\s-]?[1-9][0-9]{7}$/,
+            'Invalid phoneNumber'
+        )
         chai.expect(req.body.firstName).to.not.be.empty
         chai.expect(req.body.firstName).to.be.a('string')
         chai.expect(req.body.firstName).to.match(
@@ -25,6 +42,7 @@ const validateUserCreate = (req, res, next) => {
             'firstName must be a string'
         )
         logger.trace('User successfully validated')
+
         next()
     } catch (ex) {
         logger.trace('User validation failed:', ex.message)
@@ -76,12 +94,28 @@ const validateUserUpdate = (req, res, next) => {
         })
     }
 }
+const validateUserId = (req, res, next) => {
+    try {
+        assert(req.query.userId, 'Missing or incorrect userId field')
+        chai.expect(req.query.userId).to.not.be.empty
+        chai.expect(req.query.userId).to.be.a('number')
+
+        next()
+    } catch (ex) {
+        logger.trace('User validation failed:', ex.message)
+        next({
+            status: 400,
+            message: ex.message,
+            data: {}
+        })
+    }
+}
 
 // User routes
 router.post('/api/user', validateUserCreate, userController.create)
-router.get('/api/user', validateToken, userController.getAll)
+router.get('/api/users', validateToken, userController.getAll)
 router.get('/api/user/profile', validateToken, userController.getProfile)
-router.get('/api/user/:userId', userController.getById)
+router.get('/api/user/:userId', validateUserId, userController.getById)
 router.put(
     '/api/user/update',
     validateToken,
