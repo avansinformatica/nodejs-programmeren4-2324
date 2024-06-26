@@ -40,7 +40,7 @@ describe('UC-304 Opvragen van maaltijd bij ID', () => {
     describe('TC-304-2 Details van maaltijd geretourneerd', () => {
         it('should return a success message and meal data', (done) => {
             chai.request(server)
-                .get(`${endpointToTest}1`)
+                .get(`${endpointToTest}2`)
                 .end((err, res) => {
                     res.should.have.status(200)
                     res.body.should.be.a('object')
@@ -48,7 +48,7 @@ describe('UC-304 Opvragen van maaltijd bij ID', () => {
                         .property('message')
                         .eql('Found 1 meal.')
                     res.body.should.have.property('data').which.is.an('array')
-                    res.body.data[0].should.have.property('id').eql(1)
+                    res.body.data[0].should.have.property('id').eql(2)
                     res.body.data[0].should.have.property('isActive')
                     res.body.data[0].should.have.property('isVega')
                     res.body.data[0].should.have.property('isVegan')

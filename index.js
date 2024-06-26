@@ -23,7 +23,7 @@ app.get('/api/info', (req, res) => {
 })
 
 // Hier komen alle routes
-app.use('/api/auth', authRoutes)
+app.use('/api/', authRoutes)
 app.use(userRoutes)
 app.use(mealRoutes)
 
