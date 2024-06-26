@@ -7,6 +7,9 @@ const jwtSecretKey = require('../util/config').secretkey
 const routes = require('express').Router()
 const AuthController = require('../controllers/authentication.controller')
 const logger = require('../util/logger')
+chai = require('chai')
+chai.should()
+const { CharsetToEncoding } = require('mysql2')
 
 //
 //
@@ -74,7 +77,49 @@ function validateToken(req, res, next) {
         })
     }
 }
+function validateRegistion(req, res, next) {
+    // Verify that we receive the expected input
+    try {
+        const body = req.body
+        chai.expect(body, 'Missing emailaddress').to.have.property(
+            'emailAdress'
+        )
+        //check if everything is here
+        chai.expect(body, 'Missing password').to.have.property('password')
+        chai.expect(body, 'Missing firstname').to.have.property('firstName')
+        chai.expect(body, 'Missing lastname').to.have.property('lastName')
+        chai.expect(body, 'Missing phoneNumber').to.have.property('phoneNumber')
+        chai.expect(body, 'Missing street').to.have.property('street')
+        chai.expect(body, 'Missing city').to.have.property('city')
+        // check if everything is a valid value
+        chai.expect(body.emailAdress, 'Invalid emailAdress').to.be.a('string')
+        chai.expect(body.password, 'Invalid password').to.be.a('string')
+        chai.expect(body.firstName, 'Invalid firstName').to.be.a('string')
+        chai.expect(body.lastName, 'Invalid lastName').to.be.a('string')
+        chai.expect(body.phoneNumber, 'Invalid phoneNumber').to.be.a('string')
+        chai.expect(body.street, 'Invalid street').to.be.a('string')
+        chai.expect(body.city, 'Invalid city').to.be.a('string')
+
+        // validate the email and phonenumber
+        chai.expect(body.emailAdress, 'Invalid emailAdress').to.match(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        )
+
+        chai.expect(body.phoneNumber, 'Invalid phoneNumber').to.match(
+            /^(?:\+31\s?|0)?6[\s-]?[1-9][0-9]{7}$/
+        )
+
+        next()
+    } catch (ex) {
+        next({
+            status: 400,
+            message: ex.toString(),
+            data: {}
+        })
+    }
+}
 
 routes.post('/login', validateLogin, AuthController.login)
+routes.post('/register', validateRegistion, AuthController.register)
 
 module.exports = { routes, validateToken }
