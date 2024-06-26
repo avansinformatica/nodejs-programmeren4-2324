@@ -214,55 +214,79 @@ const userService = {
 
         tokenUserId = parseInt(decoded.userId, 10) // Converteer naar integer met base 10
 
-        // console.log(tokenUserId)
-
-        // console.log(userId)
-
-        if (userId === tokenUserId) {
-            if (!updatedUser.emailAdress) {
-                return callback(
-                    new Error('Verplicht veld “emailAddress” ontbreekt'),
-                    null
-                )
-            } else if (!phoneRegex.test(updatedUser.phoneNumber)) {
-                return callback(
-                    new Error('PhoneNumber must only contain numbers'),
-                    null
-                )
-            } else {
-                db.getConnection(function (err, connection) {
-                    if (err) {
-                        logger.error(err)
-                        callback(err, null)
+        db.getConnection(function (err, connection) {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+            connection.query(
+                'SELECT id FROM `user` WHERE id = ?',
+                [userId],
+                (error, results, fields) => {
+                    if (error) {
+                        connection.release()
+                        logger.error(error)
+                        callback(error, null)
                         return
                     }
 
-                    connection.query(
-                        'UPDATE `user` SET ? WHERE id = ?',
-                        [updatedUser, userId],
-                        function (error, results, fields) {
-                            connection.release()
-
-                            if (error) {
-                                logger.error(error)
-                                callback(error, null)
+                    if (results.length === 0) {
+                        connection.release()
+                        callback(new Error('User not found'), null)
+                        return
+                    } else {
+                        if (userId === tokenUserId) {
+                            if (!updatedUser.emailAdress) {
+                                return callback(
+                                    new Error(
+                                        'Verplicht veld “emailAddress” ontbreekt'
+                                    ),
+                                    null
+                                )
+                            } else if (
+                                !phoneRegex.test(updatedUser.phoneNumber)
+                            ) {
+                                return callback(
+                                    new Error(
+                                        'PhoneNumber must only contain numbers'
+                                    ),
+                                    null
+                                )
                             } else {
-                                logger.trace(`User updated with id ${userId}.`)
-                                callback(null, {
-                                    message: `User updated with id ${userId}.`,
-                                    data: results
-                                })
+                                connection.query(
+                                    'UPDATE `user` SET ? WHERE id = ?',
+                                    [updatedUser, userId],
+                                    function (error, results, fields) {
+                                        connection.release()
+
+                                        if (error) {
+                                            logger.error(error)
+                                            callback(error, null)
+                                        } else {
+                                            logger.trace(
+                                                `User updated with id ${userId}.`
+                                            )
+                                            callback(null, {
+                                                message: `User updated with id ${userId}.`,
+                                                data: results
+                                            })
+                                        }
+                                    }
+                                )
                             }
+                        } else {
+                            return callback(
+                                new Error(
+                                    'Je bent niet de eigenaar van de data'
+                                ),
+                                null
+                            )
                         }
-                    )
-                })
-            }
-        } else {
-            return callback(
-                new Error('Je bent niet de eigenaar van de data'),
-                null
+                    }
+                }
             )
-        }
+        })
     },
 
     delete: (userId, token, callback) => {
@@ -276,39 +300,59 @@ const userService = {
 
         tokenUserId = parseInt(decoded.userId, 10) // Converteer naar integer met base 10
 
-        if (userId === tokenUserId) {
-            db.getConnection(function (err, connection) {
-                if (err) {
-                    logger.error(err)
-                    callback(err, null)
-                    return
-                }
-
-                connection.query(
-                    'DELETE FROM `user` WHERE id = ?',
-                    [userId],
-                    function (error, results, fields) {
+        db.getConnection((err, connection) => {
+            if (err) {
+                logger.error(err)
+                callback(err, null)
+                return
+            }
+            connection.query(
+                'SELECT id FROM `user` WHERE id = ?',
+                [userId],
+                (error, results, fields) => {
+                    if (error) {
                         connection.release()
+                        logger.error(error)
+                        callback(error, null)
+                        return
+                    }
 
-                        if (error) {
-                            logger.error(error)
-                            callback(error, null)
+                    if (results.length === 0) {
+                        connection.release()
+                        callback(new Error('User not found'), null)
+                        return
+                    } else {
+                        if (userId === tokenUserId) {
+                            connection.query(
+                                'DELETE FROM `user` WHERE id = ?',
+                                [userId],
+                                function (error, results, fields) {
+                                    connection.release()
+
+                                    if (error) {
+                                        logger.error(error)
+                                        callback(error, null)
+                                    } else {
+                                        logger.debug(results)
+                                        callback(null, {
+                                            message: `User with id ${userId} deleted.`,
+                                            data: results
+                                        })
+                                    }
+                                }
+                            )
                         } else {
-                            logger.debug(results)
-                            callback(null, {
-                                message: `User with id ${userId} deleted.`,
-                                data: results
-                            })
+                            return callback(
+                                new Error(
+                                    'Je bent niet de eigenaar van de data'
+                                ),
+                                null
+                            )
                         }
                     }
-                )
-            })
-        } else {
-            return callback(
-                new Error('Je bent niet de eigenaar van de data'),
-                null
+                }
             )
-        }
+        })
     }
 }
 

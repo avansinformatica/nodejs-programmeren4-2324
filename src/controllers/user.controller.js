@@ -146,6 +146,9 @@ let userController = {
                     case 'Je bent niet de eigenaar van de data':
                         statusCode = 403
                         break
+                    case 'User not found':
+                        statusCode = 404
+                        break
                     default:
                         statusCode = 500 // Internal Server Error
                         break
@@ -177,6 +180,9 @@ let userController = {
                     case 'Je bent niet de eigenaar van de data':
                         statusCode = 403
                         break
+                    case 'User not found':
+                        statusCode = 404
+                        break
                     default:
                         statusCode = 500 // Internal Server Error
                         break
@@ -190,8 +196,7 @@ let userController = {
             if (success) {
                 res.status(200).json({
                     status: success.status,
-                    message: success.message,
-                    data: success.data
+                    message: success.message
                 })
             }
         })

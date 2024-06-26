@@ -4,6 +4,7 @@ const chai = require('chai')
 chai.should()
 const router = express.Router()
 const userController = require('../controllers/user.controller')
+const mealController = require('../controllers/meal.controller')
 const validateToken = require('./authentication.routes').validateToken
 const logger = require('../util/logger')
 

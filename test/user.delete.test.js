@@ -26,7 +26,19 @@ describe('UC-206 Verwijderen van user', () => {
      */
 
     describe('TC-206-1 Gebruiker bestaat niet', () => {
-        /// ik weet niet wat ik hier moet implementeren omdat je alleen een gebruiker kan updaten als je bent ingelogd dus dan bestaat de gebruiker altijd en anders ben je niet de eigenaar
+        it('should return a error message', (done) => {
+            chai.request(server)
+                .put(`${endpointToTest}${999}`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(404)
+                    res.body.should.be.a('object')
+                    res.body.should.have
+                        .property('message')
+                        .eql('User not found')
+                    done()
+                })
+        })
     })
 
     describe('TC-206-2 Gebruiker is niet ingelogd', () => {
@@ -67,7 +79,7 @@ describe('UC-206 Verwijderen van user', () => {
     describe('TC-206-4 Gebruiker succesvol verwijderd', () => {
         it('should delete the user', (done) => {
             chai.request(server)
-                .put(`${endpointToTest}${61}`)
+                .delete(`${endpointToTest}${61}`)
                 .set(
                     'Authorization',
                     `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjYxLCJpYXQiOjE3MTU3MTkyMTAsImV4cCI6MTcxNjc1NjAxMH0.SckOigMtgBBRwosm1n9qgtz6zKRxcB1CCTPFhUDy3Js`
@@ -77,7 +89,7 @@ describe('UC-206 Verwijderen van user', () => {
                     res.body.should.be.a('object')
                     res.body.should.have
                         .property('message')
-                        .eql('User updated with id 61.')
+                        .eql('User deleted with id 61.')
                     done()
                 })
         })

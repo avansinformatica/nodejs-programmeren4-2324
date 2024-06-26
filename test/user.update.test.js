@@ -96,7 +96,19 @@ describe('UC-205 Updaten van usergegevens', () => {
     })
 
     describe('TC-205-4 Gebruiker bestaat niet', () => {
-        /// ik weet niet wat ik hier moet implementeren omdat je alleen een gebruiker kan updaten als je bent ingelogd dus dan bestaat de gebruiker altijd en anders ben je niet de eigenaar
+        it('should return a error message', (done) => {
+            chai.request(server)
+                .put(`${endpointToTest}${999}`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(404)
+                    res.body.should.be.a('object')
+                    res.body.should.have
+                        .property('message')
+                        .eql('User not found')
+                    done()
+                })
+        })
     })
 
     describe('TC-205-5 Niet ingelogd', () => {
