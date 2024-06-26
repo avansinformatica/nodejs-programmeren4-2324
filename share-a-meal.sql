@@ -107,7 +107,7 @@ CREATE TABLE `user` (
   `firstName` varchar(255) NOT NULL,
   `lastName` varchar(255) NOT NULL,
   `isActive` tinyint NOT NULL DEFAULT '1',
-  `emailAdress` varchar(255) NOT NULL,
+  `emailAdress` varchar(255) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
   `phoneNumber` varchar(255) DEFAULT '-',
   `roles` set('admin','editor','guest') NOT NULL DEFAULT 'editor,guest',

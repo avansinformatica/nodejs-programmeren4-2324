@@ -1,0 +1,30 @@
+config:
+    target: 'http://localhost:3000'
+    phases:
+        - name: 'warmup'
+          duration: 1
+          arrivalRate: 1
+
+        - name: 'load test'
+          duration: 30
+          arrivalRate: 5
+
+        - name: 'ramp up'
+          duration: 30
+          arrivalRate: 10
+          rampTo: 50
+
+scenarios:
+    - flow:
+          - post:
+                url: '/api/auth/login'
+                json:
+                    emailAdress: 'm.vandullemen@server.nl'
+                    password: 'secret'
+                capture:
+                    json: '$.data.token'
+                    as: 'token'
+          - get:
+                url: '/api/user'
+                headers:
+                    Authorization: 'Bearer {{token}}'
